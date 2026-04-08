@@ -2,13 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>翠翠大冒险</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>翠翠</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        
+        html, body {
+            touch-action: pan-x pan-y;
+            -webkit-text-size-adjust: 100%;
         }
         
         body {
@@ -19,6 +25,7 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         h1 {
@@ -54,7 +61,7 @@
         .character {
             position: relative;
             width: 200px;
-            height: 350px;
+            height: 380px;
             margin: 0 auto 30px;
         }
         
@@ -92,11 +99,13 @@
         .arm-left, .arm-right {
             position: absolute;
             width: 30px;
-            height: 100px;
+            height: 110px;
             background: #fdbf60;
             border-radius: 15px;
             top: 130px;
-            transition: transform 0.3s;
+            transition: transform 0.1s;
+            border: 2px solid #e0a040;
+            z-index: 15;
         }
         
         .arm-left {
@@ -109,22 +118,50 @@
             transform-origin: top center;
         }
         
-        /* 打飞机动画 */
-        .character.fapping .arm-right {
-            animation: fap 0.3s ease-in-out;
+        /* 手臂末端的"手" */
+        .arm-right::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #fdbf60;
+            border-radius: 50%;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #e0a040;
         }
         
-        @keyframes fap {
-            0% { transform: rotate(0deg) translateX(0); }
-            50% { transform: rotate(-30deg) translateX(-20px); }
-            100% { transform: rotate(0deg) translateX(0); }
+        /* 初始状态 - 自然下垂 */
+        .arm-right {
+            transform: rotate(10deg);
+        }
+        
+        .arm-left {
+            transform: rotate(-10deg);
+        }
+        
+        /* 脱裤子后的握持姿态 */
+        .character.undressed .arm-right {
+            transform: rotate(-140deg) translateX(15px);
+        }
+        
+        /* 打飞机动画 - 上下套弄 */
+        .character.fapping .arm-right {
+            animation: fapStroke 0.4s ease-in-out;
+        }
+        
+        @keyframes fapStroke {
+            0% { transform: rotate(-140deg) translateX(15px) translateY(0); }
+            50% { transform: rotate(-130deg) translateX(10px) translateY(-15px); }
+            100% { transform: rotate(-140deg) translateX(15px) translateY(0); }
         }
         
         /* 腿部容器 */
         .legs {
             position: relative;
             width: 100px;
-            height: 120px;
+            height: 130px;
             margin: 0 auto;
         }
         
@@ -132,10 +169,12 @@
         .leg-left, .leg-right {
             position: absolute;
             width: 40px;
-            height: 120px;
+            height: 130px;
             background: #fdbf60;
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 15px 15px;
             bottom: 0;
+            border: 2px solid #e0a040;
+            border-top: none;
         }
         
         .leg-left {
@@ -150,23 +189,26 @@
         .pants {
             position: absolute;
             width: 100px;
-            height: 80px;
+            height: 90px;
             background: #2c3e50;
-            bottom: 40px;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             border-radius: 0 0 10px 10px;
             z-index: 8;
             transition: opacity 0.5s;
+            border: 2px solid #1a252f;
         }
         
         .pants::before, .pants::after {
             content: '';
             position: absolute;
             width: 45px;
-            height: 45px;
+            height: 50px;
             background: #2c3e50;
-            bottom: -35px;
+            bottom: -40px;
+            border: 2px solid #1a252f;
+            border-top: none;
         }
         
         .pants::before {
@@ -184,62 +226,108 @@
             pointer-events: none;
         }
         
-        /* 阴茎 */
-        .penis {
+        /* 阴茎容器 - 用于定位和旋转 */
+        .penis-container {
             position: absolute;
-            width: 30px;
-            height: 0;
-            background: #e8b4b4;
-            border-radius: 15px 15px 50% 50%;
-            bottom: 60px;
+            bottom: 70px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 6;
+            transform-origin: bottom center;
+        }
+        
+        /* 阴茎 - 向上翘起 */
+        .penis {
+            width: 35px;
+            height: 0;
+            background: linear-gradient(to top, #e8b4b4, #f5c8c8);
+            border-radius: 15px 15px 50% 50%;
             transition: height 0.5s;
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
+            transform: rotate(-25deg);
+            transform-origin: bottom center;
+            border: 2px solid #d4a0a0;
         }
         
         .penis.show {
-            height: 60px;
+            height: 75px;
         }
         
         /* 龟头 */
-        .penis::after {
-            content: '';
+        .penis-head {
             position: absolute;
-            width: 32px;
-            height: 20px;
-            background: #d4a0a0;
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(to top, #d4a0a0, #e8b4b4);
             border-radius: 50%;
-            top: -5px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
+            border: 2px solid #c08080;
+        }
+        
+        /* 尿道口 */
+        .penis-head::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #a06060;
+            border-radius: 50%;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* 阴囊 */
+        .scrotum {
+            position: absolute;
+            width: 50px;
+            height: 30px;
+            background: #e8b4b4;
+            border-radius: 50%;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 2px solid #d4a0a0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .penis.show + .scrotum {
+            opacity: 1;
         }
         
         /* 白色液体 */
         .sperm {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: white;
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at 30% 30%, white, #f0f0f0);
             border-radius: 50%;
             opacity: 0;
             pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
         }
         
         @keyframes ejaculate {
             0% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translate(0, 0) scale(1);
+            }
+            30% {
+                transform: translate(var(--tx), var(--ty)) scale(0.9);
             }
             100% {
                 opacity: 0;
-                transform: translateY(-150px) scale(0.5);
+                transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) * 1.5 - 100px)) scale(0.3);
             }
         }
         
         .sperm.animating {
-            animation: ejaculate 1s ease-out forwards;
+            animation: ejaculate 1.5s ease-out forwards;
         }
         
         /* 按钮 */
@@ -256,8 +344,17 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-weight: bold;
+            outline: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+        }
+        
+        button:active {
+            transform: scale(0.95);
         }
         
         .btn-undress {
@@ -265,15 +362,13 @@
             color: white;
         }
         
-        .btn-undress:hover {
+        .btn-undress:hover:not(:disabled) {
             background: #c0392b;
-            transform: scale(1.05);
         }
         
         .btn-undress:disabled {
             background: #95a5a6;
             cursor: not-allowed;
-            transform: none;
         }
         
         .btn-fap {
@@ -283,7 +378,6 @@
         
         .btn-fap:hover:not(:disabled) {
             background: #8e44ad;
-            transform: scale(1.05);
         }
         
         .btn-fap:disabled {
@@ -294,11 +388,11 @@
         .btn-next {
             background: #27ae60;
             color: white;
+            margin-top: 20px;
         }
         
         .btn-next:hover {
             background: #229954;
-            transform: scale(1.05);
         }
         
         /* 消息提示 */
@@ -345,6 +439,7 @@
             border-radius: 20px;
             text-align: center;
             animation: popIn 0.5s;
+            max-width: 90%;
         }
         
         @keyframes popIn {
@@ -360,9 +455,25 @@
         }
         
         .victory-content p {
-            font-size: 20px;
+            font-size: 24px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .victory-content .thanks {
+            font-size: 28px;
+            color: #e74c3c;
+            margin-top: 20px;
+        }
+        
+        /* 连续喷射动画 */
+        @keyframes continuousSquirt {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), calc(var(--ty) - 80px)) scale(0.2); }
+        }
+        
+        .sperm.continuous {
+            animation: continuousSquirt 0.8s ease-out forwards;
         }
     </style>
 </head>
@@ -381,11 +492,16 @@
             </div>
             <div class="body"></div>
             <div class="arm-left"></div>
-            <div class="arm-right"></div>
+            <div class="arm-right" id="armRight"></div>
             <div class="legs">
                 <div class="leg-left"></div>
                 <div class="leg-right"></div>
-                <div class="penis" id="penis"></div>
+                <div class="penis-container">
+                    <div class="penis" id="penis">
+                        <div class="penis-head"></div>
+                    </div>
+                    <div class="scrotum"></div>
+                </div>
                 <div class="pants" id="pants"></div>
             </div>
         </div>
@@ -403,6 +519,7 @@
         <div class="victory-content">
             <h2>🎉 恭喜过关！</h2>
             <p>翠翠舒服了~</p>
+            <p class="thanks">谢谢！</p>
             <button class="btn-next" onclick="nextLevel()">进入第 <span id="nextLevelNum">2</span> 关</button>
         </div>
     </div>
@@ -429,9 +546,13 @@
             
             isUndressed = true;
             document.getElementById('pants').classList.add('hidden');
+            
             setTimeout(() => {
                 document.getElementById('penis').classList.add('show');
             }, 300);
+            
+            // 添加脱裤子状态类，改变手臂姿态
+            document.getElementById('character').classList.add('undressed');
             
             document.getElementById('btnUndress').disabled = true;
             document.getElementById('btnUndress').textContent = '已脱裤子';
@@ -448,12 +569,12 @@
             
             if (isCompleted) return;
             
-            // 播放手臂动画
+            // 播放手臂动画（上下套弄）
             const character = document.getElementById('character');
             character.classList.add('fapping');
             setTimeout(() => {
                 character.classList.remove('fapping');
-            }, 300);
+            }, 400);
             
             currentCount++;
             updateUI();
@@ -464,46 +585,98 @@
             }
         }
         
-        // 喷射效果
-        function ejaculate() {
+        // 获取阴茎头部的位置（用于喷射起点）
+        function getPenisTipPosition() {
             const penis = document.getElementById('penis');
             const rect = penis.getBoundingClientRect();
+            // 计算向上翘起的头部位置
+            const angle = -25 * Math.PI / 180; // -25度转换为弧度
+            const length = rect.height * 0.9; // 90%处的位置
+            return {
+                x: rect.left + rect.width / 2 + Math.sin(angle) * length,
+                y: rect.top + Math.cos(angle) * length
+            };
+        }
+        
+        // 喷射效果 - 大量白色液体
+        function ejaculate() {
+            const tip = getPenisTipPosition();
             
-            // 创建多个精子粒子
-            for (let i = 0; i < 15; i++) {
+            // 第一波 - 大量喷射
+            for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
-                    const sperm = document.createElement('div');
-                    sperm.className = 'sperm';
-                    sperm.style.left = rect.left + rect.width / 2 + (Math.random() - 0.5) * 20 + 'px';
-                    sperm.style.top = rect.top + 'px';
-                    sperm.style.transform = `translateX(${(Math.random() - 0.5) * 50}px)`;
-                    document.body.appendChild(sperm);
-                    
-                    setTimeout(() => {
-                        sperm.classList.add('animating');
-                    }, 10);
-                    
-                    setTimeout(() => {
-                        sperm.remove();
-                    }, 1000);
-                }, i * 50);
+                    createSpermParticle(tip.x, tip.y, true);
+                }, i * 30);
             }
+            
+            // 第二波 - 继续喷射
+            setTimeout(() => {
+                for (let i = 0; i < 25; i++) {
+                    setTimeout(() => {
+                        createSpermParticle(tip.x, tip.y, false);
+                    }, i * 40);
+                }
+            }, 800);
+            
+            // 第三波 - 最后喷射
+            setTimeout(() => {
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createSpermParticle(tip.x, tip.y, false);
+                    }, i * 50);
+                }
+            }, 1600);
+        }
+        
+        // 创建单个精子粒子
+        function createSpermParticle(x, y, isFirstWave) {
+            const sperm = document.createElement('div');
+            sperm.className = 'sperm' + (isFirstWave ? ' continuous' : '');
+            
+            // 随机大小
+            const size = 6 + Math.random() * 8;
+            sperm.style.width = size + 'px';
+            sperm.style.height = size + 'px';
+            
+            // 设置起始位置
+            sperm.style.left = x + 'px';
+            sperm.style.top = y + 'px';
+            
+            // 随机方向和距离
+            const angle = (Math.random() - 0.5) * Math.PI; // -90度到90度的扇形
+            const distance = 50 + Math.random() * 100;
+            const tx = Math.sin(angle) * distance;
+            const ty = -Math.abs(Math.cos(angle) * distance) - 30;
+            
+            sperm.style.setProperty('--tx', tx + 'px');
+            sperm.style.setProperty('--ty', ty + 'px');
+            
+            document.body.appendChild(sperm);
+            
+            setTimeout(() => {
+                sperm.classList.add('animating');
+            }, 10);
+            
+            // 清理
+            setTimeout(() => {
+                sperm.remove();
+            }, 2000);
         }
         
         // 完成关卡
         function completeLevel() {
             isCompleted = true;
             document.getElementById('btnFap').disabled = true;
-            document.getElementById('message').textContent = '翠翠舒服了！';
-            document.getElementById('message').classList.add('success');
             
-            // 播放喷射效果
+            // 播放喷射效果（持续约2.5秒）
             ejaculate();
             
-            // 显示胜利弹窗
+            // 3秒后显示胜利弹窗
             setTimeout(() => {
+                document.getElementById('message').textContent = '翠翠舒服了！谢谢！';
+                document.getElementById('message').classList.add('success');
                 document.getElementById('victoryOverlay').classList.add('show');
-            }, 1000);
+            }, 3000);
         }
         
         // 下一关
@@ -517,6 +690,7 @@
             // 重置UI
             document.getElementById('pants').classList.remove('hidden');
             document.getElementById('penis').classList.remove('show');
+            document.getElementById('character').classList.remove('undressed', 'fapping');
             document.getElementById('btnUndress').disabled = false;
             document.getElementById('btnUndress').textContent = '脱裤子';
             document.getElementById('btnFap').disabled = true;
@@ -526,6 +700,16 @@
             
             updateUI();
         }
+        
+        // 阻止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
         
         // 初始化
         updateUI();
