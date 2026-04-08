@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>翠翠的幸福生活</title>
+    <title>翠翠</title>
     <style>
         * {
             margin: 0;
@@ -165,7 +165,7 @@
             z-index: 5;
         }
         
-        /* 手臂 - 初始位置 */
+        /* 手臂 - 初始位置（自然下垂） */
         .arm-left, .arm-right {
             position: absolute;
             width: 26px;
@@ -174,54 +174,66 @@
             border-radius: 13px;
             top: 130px;
             border: 2px solid #e0a040;
-            z-index: 20;
+            z-index: 15;
             transform-origin: top center;
+            transition: transform 0.3s;
         }
         
         .arm-left {
             left: 28px;
-            transform: rotate(-15deg);
+            transform: rotate(-10deg);
         }
         
         .arm-right {
             right: 28px;
-            transform: rotate(15deg);
+            transform: rotate(10deg);
         }
         
-        /* 脱裤子后 - 两只手都握住阴茎并套弄 */
+        /* 脱裤子后 - 两只手都握住阴茎 */
         .character.undressed .arm-left {
-            animation: fapLeft 0.12s ease-in-out infinite alternate;
+            transform: rotate(-20deg) translate(15px, 35px);
+            z-index: 18;
         }
         
         .character.undressed .arm-right {
-            animation: fapRight 0.12s ease-in-out infinite alternate;
+            transform: rotate(20deg) translate(-15px, 35px);
+            z-index: 22;
         }
         
-        /* 左手套弄动画 - 握住根部 */
+        /* 打飞机动画 - 两只手同时上下套弄 */
+        .character.fapping .arm-left {
+            animation: fapLeft 0.15s ease-in-out infinite alternate;
+        }
+        
+        .character.fapping .arm-right {
+            animation: fapRight 0.15s ease-in-out infinite alternate;
+        }
+        
+        /* 左手套弄 - 握住根部，上下移动 */
         @keyframes fapLeft {
             0% {
-                transform: rotate(-35deg) translate(8px, 15px);
+                transform: rotate(-20deg) translate(15px, 25px);
             }
             100% {
-                transform: rotate(-25deg) translate(8px, -15px);
+                transform: rotate(-20deg) translate(15px, 55px);
             }
         }
         
-        /* 右手套弄动画 - 握住中部，比左手快一点点 */
+        /* 右手套弄 - 握住中部，上下移动（与左手错开一点） */
         @keyframes fapRight {
             0% {
-                transform: rotate(-50deg) translate(0px, 20px);
+                transform: rotate(20deg) translate(-15px, 15px);
             }
             100% {
-                transform: rotate(-40deg) translate(0px, -25px);
+                transform: rotate(20deg) translate(-15px, 50px);
             }
         }
         
         /* 手部 */
         .hand {
             position: absolute;
-            width: 32px;
-            height: 38px;
+            width: 34px;
+            height: 40px;
             background: #fdbf60;
             border-radius: 50%;
             bottom: -18px;
@@ -258,7 +270,7 @@
             right: 5px;
         }
         
-        /* 裤子 */
+        /* 裤子 - z-index 在阴茎上面 */
         .pants {
             position: absolute;
             width: 100px;
@@ -268,7 +280,7 @@
             left: 50%;
             transform: translateX(-50%);
             border-radius: 0 0 10px 10px;
-            z-index: 8;
+            z-index: 25;
             transition: opacity 0.5s;
             border: 2px solid #1a252f;
         }
@@ -299,21 +311,21 @@
             pointer-events: none;
         }
         
-        /* 阴茎容器 */
+        /* 阴茎容器 - 在裤子下面 */
         .penis-container {
             position: absolute;
-            bottom: 110px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 25; /* 比手高，确保头部露出来 */
+            z-index: 8;
         }
         
-        /* 阴茎 */
+        /* 阴茎 - 默认隐藏 */
         .penis {
-            width: 30px;
+            width: 28px;
             height: 0;
             background: linear-gradient(to top, #e8b4b4, #f5c8c8);
-            border-radius: 15px 15px 50% 50%;
+            border-radius: 14px 14px 50% 50%;
             transition: height 0.5s;
             overflow: visible;
             position: relative;
@@ -323,21 +335,21 @@
         }
         
         .penis.show {
-            height: 75px;
+            height: 70px;
         }
         
-        /* 龟头 - 确保露出来 */
+        /* 龟头 */
         .penis-head {
             position: absolute;
-            width: 38px;
-            height: 28px;
+            width: 36px;
+            height: 26px;
             background: linear-gradient(to top, #d4a0a0, #f0c0c0);
             border-radius: 50%;
-            top: -14px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
             border: 2px solid #c08080;
-            z-index: 30; /* 最高层级 */
+            z-index: 10;
         }
         
         /* 尿道口 */
@@ -350,23 +362,23 @@
             top: 4px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 35;
+            z-index: 12;
         }
         
         /* 阴囊 */
         .scrotum {
             position: absolute;
-            width: 45px;
-            height: 25px;
+            width: 42px;
+            height: 22px;
             background: #e8b4b4;
             border-radius: 50%;
-            bottom: -12px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             border: 2px solid #d4a0a0;
             opacity: 0;
             transition: opacity 0.5s;
-            z-index: 15;
+            z-index: 6;
         }
         
         .penis.show + .scrotum {
@@ -682,7 +694,7 @@
         let isCompleted = false;
         let isUnlocked = false;
         let headClickCount = 0;
-        let actualClickCount = 0; // 实际点击次数
+        let actualClickCount = 0;
         const UNLOCK_THRESHOLD = 10;
         
         // DOM元素
@@ -790,7 +802,7 @@
             message.textContent = '';
         }
         
-        // 打飞机 - 使用 pointerdown 确保每次点击都计数
+        // 打飞机
         function fap(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -802,12 +814,16 @@
             
             if (isCompleted) return;
             
-            // 每次点击都增加
             actualClickCount++;
             currentCount++;
             updateUI();
             
-            // 视觉反馈
+            // 点击时触发动画
+            character.classList.add('fapping');
+            setTimeout(() => {
+                character.classList.remove('fapping');
+            }, 150);
+            
             btnFap.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 btnFap.style.transform = '';
@@ -930,7 +946,7 @@
             isCompleted = true;
             btnFap.disabled = true;
             
-            character.classList.remove('undressed');
+            character.classList.remove('undressed', 'fapping');
             
             ejaculate();
             
@@ -952,7 +968,7 @@
             
             pants.classList.remove('hidden');
             penis.classList.remove('show');
-            character.classList.remove('undressed');
+            character.classList.remove('undressed', 'fapping');
             btnUndress.disabled = false;
             btnUndress.textContent = '脱裤子';
             btnFap.disabled = false;
@@ -963,7 +979,7 @@
             updateUI();
         }
         
-        // 绑定事件 - 使用 pointerdown 确保快速点击不漏
+        // 绑定事件
         head.addEventListener('pointerdown', clickHead);
         btnUndress.addEventListener('pointerdown', function(e) {
             e.preventDefault();
