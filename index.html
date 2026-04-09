@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>翠斗罗 - CUI CONTRA</title>
+    <title>翠斗罗 - CUI</title>
     <style>
         * {
             margin: 0;
@@ -224,7 +224,7 @@
         /* 动作按钮 - A/B键风格 */
         .action-buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: flex-end;
             pointer-events: auto;
             padding-bottom: 10px;
@@ -267,6 +267,21 @@
         .btn-b {
             background: linear-gradient(145deg, #e74c3c, #c0392b);
             box-shadow: 0 6px 0 #922b21, 0 8px 10px rgba(0,0,0,0.3);
+        }
+        
+        .btn-b:active {
+            box-shadow: 0 2px 0 #922b21, 0 4px 5px rgba(0,0,0,0.3);
+        }
+        
+        .btn-c {
+            background: linear-gradient(145deg, #27ae60, #1e8449);
+            box-shadow: 0 6px 0 #166534, 0 8px 10px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        
+        .btn-c:active {
+            box-shadow: 0 2px 0 #166534, 0 4px 5px rgba(0,0,0,0.3);
+        }
         }
         
         .btn-b:active {
@@ -507,7 +522,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="weapon-box" id="weaponIcon">N</div>
+                <div class="hud-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                    <div class="weapon-box" id="weaponIcon">N</div>
+                    <div style="color: #ffff00; font-size: 14px; font-weight: bold; text-shadow: 2px 2px 0 #000;">STAGE <span id="stageNum">1</span></div>
+                </div>
             </div>
             
             <div class="boss-hud" id="bossHud">
@@ -529,7 +547,7 @@
             <button class="start-btn" id="startBtn">START</button>
             <div class="controls-hint">
                 ← → MOVE　↑ ↓ AIM　<br>
-                Z SHOOT　X JUMP<br>
+                Z SHOOT　X JUMP　C FLIP<br>
                 © 2024 CUI SOFT
             </div>
         </div>
@@ -545,11 +563,15 @@
                 <div class="d-pad-center"></div>
             </div>
             
-            <!-- A/B 按钮 -->
+            <!-- A/B/C 按钮 -->
             <div class="action-buttons">
                 <div class="action-btn btn-b" id="btnShoot">
                     SHOOT
                     <span class="btn-label">B</span>
+                </div>
+                <div class="action-btn btn-c" id="btnFlip">
+                    FLIP
+                    <span class="btn-label">C</span>
                 </div>
                 <div class="action-btn btn-a" id="btnJump">
                     JUMP
@@ -597,7 +619,7 @@
             initKeyboard() {
                 window.addEventListener('keydown', (e) => {
                     this.keys[e.key.toLowerCase()] = true;
-                    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'z', 'x'].includes(e.key.toLowerCase())) {
+                    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' ', 'z', 'x', 'c'].includes(e.key.toLowerCase())) {
                         e.preventDefault();
                     }
                 });
@@ -624,6 +646,10 @@
                             btn.style.boxShadow = '0 2px 0 #9c6410, 0 4px 5px rgba(0,0,0,0.3)';
                             btn.style.transform = 'translateY(4px) scale(0.95)';
                         }
+                        if (id.includes('btnC') || id === 'btnFlip') {
+                            btn.style.boxShadow = '0 2px 0 #166534, 0 4px 5px rgba(0,0,0,0.3)';
+                            btn.style.transform = 'translateY(4px) scale(0.95)';
+                        }
                     };
                     
                     const endHandler = (e) => {
@@ -635,6 +661,9 @@
                         }
                         if (id.includes('btnA') || id === 'btnJump') {
                             btn.style.boxShadow = '0 6px 0 #9c6410, 0 8px 10px rgba(0,0,0,0.3)';
+                        }
+                        if (id.includes('btnC') || id === 'btnFlip') {
+                            btn.style.boxShadow = '0 6px 0 #166534, 0 8px 10px rgba(0,0,0,0.3)';
                         }
                     };
                     
@@ -652,6 +681,7 @@
                 bindTouch('btnDown', 'arrowdown');
                 bindTouch('btnShoot', 'z');
                 bindTouch('btnJump', 'x');
+                bindTouch('btnFlip', 'c');
             }
             
             isPressed(key) {
@@ -700,6 +730,12 @@
                 this.weapon = 'N';
                 this.animFrame = 0;
                 this.animTimer = 0;
+                
+                // 翻跟头相关
+                this.isFlipping = false;
+                this.flipAngle = 0;
+                this.flipTimer = 0;
+                this.flipCooldown = 0;
             }
             
             update(input, platforms) {
@@ -727,6 +763,28 @@
                 if (input.isPressed('x') && this.onGround) {
                     this.vy = CONFIG.JUMP_FORCE;
                     this.onGround = false;
+                }
+                
+                // 翻跟头（C键）- 必须在空中且不在翻跟头状态
+                if (this.flipCooldown > 0) this.flipCooldown--;
+                if (input.isPressed('c') && !this.onGround && !this.isFlipping && this.flipCooldown <= 0) {
+                    this.isFlipping = true;
+                    this.flipAngle = 0;
+                    this.flipTimer = 30; // 翻跟头持续时间
+                    this.flipCooldown = 10;
+                    this.invincible = 35; // 翻跟头期间无敌
+                    // 翻跟头时给一点向上的速度
+                    this.vy = -4;
+                }
+                
+                // 处理翻跟头
+                if (this.isFlipping) {
+                    this.flipTimer--;
+                    this.flipAngle += 12 * this.facing; // 旋转速度
+                    if (this.flipTimer <= 0) {
+                        this.isFlipping = false;
+                        this.flipAngle = 0;
+                    }
                 }
                 
                 // 空中控制
@@ -855,12 +913,19 @@
             }
             
             draw(ctx, cameraX) {
-                if (this.invincible > 0 && Math.floor(this.invincible / 4) % 2 === 0) return;
+                if (this.invincible > 0 && Math.floor(this.invincible / 4) % 2 === 0 && !this.isFlipping) return;
                 
                 const sx = this.x - cameraX;
                 const sy = this.y;
                 
                 ctx.save();
+                
+                // 翻跟头时的旋转变换
+                if (this.isFlipping) {
+                    ctx.translate(sx + 12, this.y + 20);
+                    ctx.rotate(this.flipAngle * Math.PI / 180);
+                    ctx.translate(-12, -20);
+                }
                 
                 // 身体颜色（魂斗罗经典蓝裤子红上衣）
                 const pantsColor = '#0066cc';
@@ -1683,6 +1748,11 @@
                     this.playerDeath();
                 }
                 
+                // 检查过关（非BOSS关走到地图最右边）
+                if (!this.boss && this.player.x > 3800) {
+                    this.stageClear();
+                }
+                
                 // 刷怪
                 if (!this.boss && Math.random() < 0.008 && this.enemies.length < 15) {
                     const spawnX = this.cameraX + 800 + Math.random() * 100;
@@ -1782,6 +1852,7 @@
             updateUI() {
                 document.getElementById('scoreValue').textContent = this.score.toString().padStart(6, '0');
                 document.getElementById('livesValue').textContent = '×' + this.lives;
+                document.getElementById('stageNum').textContent = this.stage;
                 if (this.player) {
                     document.getElementById('weaponIcon').textContent = this.player.weapon;
                 }
