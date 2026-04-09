@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>翠翠养成记 - 传奇人生</title>
+    <title>翠斗罗 - CUI CONTRA</title>
     <style>
         * {
             margin: 0;
@@ -16,1367 +14,1353 @@
             touch-action: manipulation;
         }
         
-        html {
+        html, body {
+            width: 100%;
             height: 100%;
-            overflow-x: hidden;
+            overflow: hidden;
+            background: #000;
         }
         
         body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            color: #fff;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .game-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 15px;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-        }
-        
-        @media (max-width: 480px) {
-            .game-container {
-                padding: 10px;
-            }
-        }
-        
-        /* 标题区 */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            font-size: 28px;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d, #6bcf7f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
-            margin-bottom: 10px;
-        }
-        
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 22px;
-            }
-        }
-        
-        .age-display {
-            font-size: 20px;
-            color: #ffd93d;
-        }
-        
-        /* 角色信息卡片 */
-        .character-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 15px;
+            font-family: 'Courier New', monospace;
             display: flex;
-            gap: 15px;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        @media (max-width: 480px) {
-            .character-card {
-                flex-direction: column;
-                text-align: center;
-                padding: 12px;
-                gap: 10px;
-            }
-        }
-        
-        .avatar-container {
+        #gameContainer {
             position: relative;
-        }
-        
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid #ff6b6b;
-            object-fit: cover;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
-            flex-shrink: 0;
-        }
-        
-        @media (max-width: 480px) {
-            .avatar {
-                width: 80px;
-                height: 80px;
-            }
-        }
-        
-        .status-badge {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: #e74c3c;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .character-info {
-            flex: 1;
-        }
-        
-        .character-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .character-title {
-            font-size: 13px;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-        
-        @media (max-width: 480px) {
-            .character-name {
-                font-size: 18px;
-            }
-            .character-title {
-                font-size: 12px;
-            }
-        }
-        
-        /* 属性条 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        
-        @media (max-width: 480px) {
-            .stats-grid {
-                gap: 6px;
-            }
-        }
-        
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .stat-icon {
-            font-size: 16px;
-        }
-        
-        .stat-bar {
-            flex: 1;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 3px;
-            overflow: hidden;
-            min-width: 40px;
-        }
-        
-        @media (max-width: 480px) {
-            .stat-icon {
-                font-size: 14px;
-            }
-            .stat-bar {
-                height: 5px;
-            }
-        }
-        
-        .stat-fill {
+            width: 100%;
             height: 100%;
-            border-radius: 4px;
-            transition: width 0.5s ease;
+            max-width: 960px;
+            max-height: 540px;
+            background: #000;
         }
         
-        .stat-fill.int { background: linear-gradient(90deg, #3498db, #5dade2); }
-        .stat-fill.str { background: linear-gradient(90deg, #e74c3c, #ec7063); }
-        .stat-fill.money { background: linear-gradient(90deg, #f1c40f, #f4d03f); }
-        .stat-fill.moral { background: linear-gradient(90deg, #9b59b6, #bb8fce); }
-        .stat-fill.code { background: linear-gradient(90deg, #1abc9c, #48c9b0); }
-        .stat-fill.luck { background: linear-gradient(90deg, #e67e22, #eb984e); }
-        
-        .stat-value {
-            font-size: 11px;
-            width: 28px;
-            text-align: right;
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
         
-        /* 主游戏区 */
-        .main-area {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 15px;
-            min-height: 250px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        @media (max-width: 480px) {
-            .main-area {
-                padding: 12px;
-                min-height: 200px;
-            }
-        }
-        
-        .story-text {
-            font-size: 15px;
-            line-height: 1.7;
-            margin-bottom: 15px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            border-left: 4px solid #ff6b6b;
-        }
-        
-        @media (max-width: 480px) {
-            .story-text {
-                font-size: 14px;
-                line-height: 1.6;
-                padding: 10px;
-            }
-        }
-        
-        .choices-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .choice-btn {
-            padding: 16px 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            min-height: 52px;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-        
-        @media (max-width: 480px) {
-            .choice-btn {
-                padding: 14px 15px;
-                font-size: 14px;
-                min-height: 48px;
-            }
-        }
-        
-        .choice-btn:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .choice-btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        
-        .choice-btn::before {
-            content: '▶';
-            margin-right: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .choice-btn:hover::before,
-        .choice-btn:active::before {
-            opacity: 1;
-        }
-        
-        .choice-btn.negative {
-            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-        }
-        
-        .choice-btn.positive {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-        
-        /* 事件日志 */
-        .event-log {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 15px;
-            max-height: 200px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        @media (max-width: 480px) {
-            .event-log {
-                max-height: 150px;
-                padding: 12px;
-            }
-        }
-        
-        .event-log h3 {
-            font-size: 14px;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-        
-        .log-item {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 13px;
-            display: flex;
-            gap: 10px;
-        }
-        
-        @media (max-width: 480px) {
-            .log-item {
-                font-size: 12px;
-                gap: 8px;
-            }
-        }
-        
-        .log-time {
-            color: #888;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        
-        .log-content {
-            color: #ddd;
-            word-break: break-word;
-        }
-        
-        .log-content.good { color: #2ecc71; }
-        .log-content.bad { color: #e74c3c; }
-        .log-content.money { color: #f1c40f; }
-        
-        /* 开始/结束界面 */
-        .screen {
-            position: fixed;
+        /* UI层 */
+        #uiLayer {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            height: -webkit-fill-available;
-            background: rgba(0, 0, 0, 0.95);
+            pointer-events: none;
+        }
+        
+        /* HUD */
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: none;
+        }
+        
+        .hud-left {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #ff0000;
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .score-section {
+            color: #fff;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #ffff00;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .score-value {
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .lives-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ff0000;
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .life-icon {
+            width: 20px;
+            height: 25px;
+            background: linear-gradient(to bottom, #ff0000 0%, #cc0000 50%, #990000 100%);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+        
+        .weapon-icon {
+            color: #00ff00;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        /* 开始/结束屏幕 */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1a0a2e 0%, #0a0a1a 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            padding: 20px;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-            overflow-y: auto;
+            pointer-events: auto;
+            z-index: 100;
         }
         
         .screen.hidden {
             display: none;
         }
         
-        .start-title {
-            font-size: 42px;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+        .game-title {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(180deg, #ff0000 0%, #cc0000 50%, #990000 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 15px;
-            text-align: center;
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+            letter-spacing: 10px;
+            margin-bottom: 10px;
+            animation: titlePulse 1.5s ease-in-out infinite;
         }
         
-        @media (max-width: 480px) {
-            .start-title {
-                font-size: 32px;
-            }
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
-        .start-subtitle {
-            font-size: 16px;
-            color: #aaa;
+        .game-subtitle {
+            font-size: 24px;
+            color: #ffff00;
+            letter-spacing: 15px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+        }
+        
+        .start-screen-avatar {
+            width: 150px;
+            height: 150px;
+            border: 5px solid #ff0000;
             margin-bottom: 30px;
-            text-align: center;
-            line-height: 1.6;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
         }
         
-        @media (max-width: 480px) {
-            .start-subtitle {
-                font-size: 14px;
-                margin-bottom: 20px;
-            }
+        .start-screen-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
-        .start-avatar {
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            border: 5px solid #ff6b6b;
-            margin-bottom: 25px;
-            box-shadow: 0 0 40px rgba(255, 107, 107, 0.6);
+        .blink-text {
+            font-size: 20px;
+            color: #fff;
+            animation: blink 1s step-end infinite;
         }
         
-        @media (max-width: 480px) {
-            .start-avatar {
-                width: 100px;
-                height: 100px;
-                margin-bottom: 20px;
-            }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
         
         .start-btn {
-            padding: 18px 50px;
-            font-size: 22px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 50px;
-            color: white;
+            padding: 15px 50px;
+            font-size: 24px;
+            background: linear-gradient(180deg, #ff0000 0%, #cc0000 100%);
+            border: 4px solid #ffff00;
+            color: #fff;
             cursor: pointer;
-            transition: all 0.2s;
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            min-height: 60px;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-        
-        .start-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
         }
         
         .start-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
         
-        @media (max-width: 480px) {
-            .start-btn {
-                padding: 16px 40px;
-                font-size: 20px;
-                min-height: 54px;
-            }
-        }
-        
-        /* 结局界面 */
-        .ending-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 25px;
-            max-width: 500px;
+        /* 移动端控制 */
+        .mobile-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            text-align: center;
-            max-height: 85vh;
-            overflow-y: auto;
+            height: 160px;
+            display: none;
+            pointer-events: none;
+            padding: 0 20px 20px;
         }
         
-        @media (max-width: 480px) {
-            .ending-card {
-                padding: 20px 15px;
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
             }
         }
         
-        .ending-title {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-        
-        @media (max-width: 480px) {
-            .ending-title {
-                font-size: 26px;
-            }
-        }
-        
-        .ending-title.good {
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .ending-title.bad {
-            background: linear-gradient(90deg, #e74c3c, #c0392b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .ending-title.neutral {
-            background: linear-gradient(90deg, #95a5a6, #7f8c8d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .ending-summary {
-            font-size: 15px;
-            line-height: 1.7;
-            color: #ddd;
-            margin-bottom: 15px;
-        }
-        
-        @media (max-width: 480px) {
-            .ending-summary {
-                font-size: 13px;
-            }
-        }
-        
-        .final-stats {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .final-stat-item {
+        .d-pad {
             display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .achievement-list {
-            display: flex;
-            flex-wrap: wrap;
             gap: 10px;
+            pointer-events: auto;
+        }
+        
+        .d-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 24px;
+            display: flex;
             justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .d-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+        
+        .action-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            text-transform: uppercase;
+        }
+        
+        .btn-shoot {
+            background: rgba(255, 0, 0, 0.5);
+            border: 4px solid #ff0000;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+        
+        .btn-jump {
+            background: rgba(0, 100, 255, 0.5);
+            border: 4px solid #0064ff;
+            box-shadow: 0 0 15px rgba(0, 100, 255, 0.5);
+        }
+        
+        .action-btn:active {
+            transform: scale(0.9);
+        }
+        
+        /* 游戏结束 */
+        .game-over-title {
+            font-size: 48px;
+            color: #ff0000;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
             margin-bottom: 20px;
         }
         
-        .achievement {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            word-break: keep-all;
+        .final-score {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
         }
         
-        @media (max-width: 480px) {
-            .achievement {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
+        .final-score span {
+            color: #ffff00;
+            font-size: 32px;
         }
         
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 6px;
+        /* 关卡完成 */
+        .stage-clear {
+            font-size: 36px;
+            color: #00ff00;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+            margin-bottom: 20px;
         }
         
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+        /* Boss血条 */
+        .boss-hp-container {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            display: none;
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 3px;
+        .boss-hp-container.show {
+            display: block;
         }
         
-        /* 成就弹窗 */
-        .achievement-popup {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            transform: translateY(-150px);
-            transition: transform 0.5s ease;
-            z-index: 100;
+        .boss-name {
             text-align: center;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
-        .achievement-popup.show {
-            transform: translateY(0);
-        }
-        
-        @media (min-width: 480px) {
-            .achievement-popup {
-                left: auto;
-                width: auto;
-                transform: translateX(400px);
-            }
-            .achievement-popup.show {
-                transform: translateX(0);
-            }
-        }
-        
-        .achievement-popup.show {
-            transform: translateX(0);
-        }
-        
-        .achievement-popup-title {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-        
-        .achievement-popup-name {
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        /* NPC对话框 */
-        .npc-dialog {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-        
-        @media (max-width: 480px) {
-            .npc-dialog {
-                padding: 10px;
-                gap: 10px;
-            }
-        }
-        
-        .npc-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-        
-        @media (max-width: 480px) {
-            .npc-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-        }
-        
-        .npc-content {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .npc-name {
-            font-weight: bold;
-            color: #ffd93d;
-            margin-bottom: 5px;
+            color: #ff0000;
             font-size: 14px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 #000;
         }
         
-        .npc-text {
+        .boss-hp-bar {
+            height: 20px;
+            background: #000;
+            border: 3px solid #fff;
+            position: relative;
+        }
+        
+        .boss-hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ff6600);
+            transition: width 0.2s;
+        }
+        
+        /* 操作说明 */
+        .controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 14px;
-            line-height: 1.6;
-            color: #ddd;
+            text-align: center;
         }
         
-        @media (max-width: 480px) {
-            .npc-text {
-                font-size: 13px;
+        @media (max-width: 768px) {
+            .controls-hint {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 开始界面 -->
-    <div id="startScreen" class="screen">
-        <h1 class="start-title">翠翠养成记</h1>
-        <img src="cuicui.jpg" alt="翠翠" class="start-avatar">
-        <p class="start-subtitle">
-            一个聋哑少年的传奇人生<br>
-            从北大青鸟到数据标注，从诈骗到真爱<br>
-            你能否帮助翠翠走完这波澜壮阔的一生？
-        </p>
-        <button class="start-btn" onclick="game.start()">开始人生</button>
-    </div>
-    
-    <!-- 结束界面 -->
-    <div id="endScreen" class="screen hidden">
-        <div class="ending-card">
-            <h2 id="endingTitle" class="ending-title"></h2>
-            <p id="endingSummary" class="ending-summary"></p>
-            <div class="final-stats" id="finalStats"></div>
-            <div class="achievement-list" id="achievementList"></div>
-            <button class="start-btn" onclick="game.restart()">重新开始</button>
-        </div>
-    </div>
-    
-    <!-- 成就弹窗 -->
-    <div id="achievementPopup" class="achievement-popup">
-        <div class="achievement-popup-title">🏆 解锁成就</div>
-        <div class="achievement-popup-name" id="achievementName"></div>
-    </div>
-    
-    <!-- 移动端手势提示 -->
-    <div id="gestureHint" style="display: none; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 99; pointer-events: none;"></div>
-    
-    <!-- 游戏主界面 -->
-    <div class="game-container" id="gameContainer" style="display: none;">
-        <div class="header">
-            <h1>翠翠养成记</h1>
-            <div class="age-display">第 <span id="ageYear">1</span> 年 / <span id="ageMonth">1</span> 月</div>
-        </div>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
         
-        <!-- 角色信息 -->
-        <div class="character-card">
-            <div class="avatar-container">
-                <img src="cuicui.jpg" alt="翠翠" class="avatar">
-                <span class="status-badge" id="statusBadge">婴儿</span>
+        <div id="uiLayer">
+            <div class="hud" id="hud">
+                <div class="hud-left">
+                    <div class="player-avatar">
+                        <img src="cuicui.jpg" alt="翠翠">
+                    </div>
+                    <div class="score-section">
+                        <div class="score-label">1P</div>
+                        <div class="score-value" id="scoreValue">000000</div>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="weapon-icon" id="weaponIcon">N</div>
+                    <div class="lives-section">
+                        <div class="life-icon"></div>
+                        <span id="livesValue">×3</span>
+                    </div>
+                </div>
             </div>
-            <div class="character-info">
-                <div class="character-name">翠翠</div>
-                <div class="character-title" id="characterTitle">一个聋哑的孩子</div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-icon">🧠</span>
-                        <div class="stat-bar"><div class="stat-fill int" id="intBar" style="width: 10%"></div></div>
-                        <span class="stat-value" id="intValue">10</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">💪</span>
-                        <div class="stat-bar"><div class="stat-fill str" id="strBar" style="width: 10%"></div></div>
-                        <span class="stat-value" id="strValue">10</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">💰</span>
-                        <div class="stat-bar"><div class="stat-fill money" id="moneyBar" style="width: 5%"></div></div>
-                        <span class="stat-value" id="moneyValue">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">⚖️</span>
-                        <div class="stat-bar"><div class="stat-fill moral" id="moralBar" style="width: 50%"></div></div>
-                        <span class="stat-value" id="moralValue">50</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">💻</span>
-                        <div class="stat-bar"><div class="stat-fill code" id="codeBar" style="width: 0%"></div></div>
-                        <span class="stat-value" id="codeValue">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-icon">🍀</span>
-                        <div class="stat-bar"><div class="stat-fill luck" id="luckBar" style="width: 30%"></div></div>
-                        <span class="stat-value" id="luckValue">30</span>
-                    </div>
+            
+            <div class="boss-hp-container" id="bossHpContainer">
+                <div class="boss-name" id="bossName">BOSS</div>
+                <div class="boss-hp-bar">
+                    <div class="boss-hp-fill" id="bossHpFill" style="width: 100%"></div>
                 </div>
             </div>
         </div>
         
-        <!-- 主游戏区 -->
-        <div class="main-area">
-            <div id="npcDialog"></div>
-            <div class="story-text" id="storyText">
-                欢迎来到翠翠的世界...
+        <!-- 移动端控制 -->
+        <div class="mobile-controls">
+            <div class="d-pad">
+                <div class="d-btn" id="btnLeft">←</div>
+                <div class="d-btn" id="btnRight">→</div>
+                <div class="d-btn" id="btnUp">↑</div>
+                <div class="d-btn" id="btnDown">↓</div>
             </div>
-            <div class="choices-container" id="choicesContainer">
-                <!-- 动态生成选项 -->
+            <div class="action-buttons">
+                <div class="action-btn btn-shoot" id="btnShoot">SHOOT</div>
+                <div class="action-btn btn-jump" id="btnJump">JUMP</div>
             </div>
         </div>
         
-        <!-- 事件日志 -->
-        <div class="event-log">
-            <h3>📜 人生大事记</h3>
-            <div id="logContainer">
-                <!-- 动态生成日志 -->
+        <!-- 开始屏幕 -->
+        <div id="startScreen" class="screen">
+            <h1 class="game-title">翠斗罗</h1>
+            <p class="game-subtitle">CUI CONTRA</p>
+            <div class="start-screen-avatar">
+                <img src="cuicui.jpg" alt="翠翠">
             </div>
+            <button class="start-btn" id="startBtn">START</button>
+            <div class="controls-hint">
+                ← → 移动 | ↑ ↓ 上下梯子 | Z 射击 | X 跳跃
+            </div>
+        </div>
+        
+        <!-- 游戏结束屏幕 -->
+        <div id="gameOverScreen" class="screen hidden">
+            <h2 class="game-over-title">GAME OVER</h2>
+            <p class="final-score">SCORE: <span id="finalScore">0</span></p>
+            <button class="start-btn" id="restartBtn">CONTINUE</button>
+        </div>
+        
+        <!-- 关卡完成屏幕 -->
+        <div id="stageClearScreen" class="screen hidden">
+            <h2 class="stage-clear">STAGE CLEAR!</h2>
+            <p class="final-score">SCORE: <span id="stageScore">0</span></p>
+            <button class="start-btn" id="nextStageBtn">NEXT STAGE</button>
         </div>
     </div>
 
     <script>
-        // ==================== 游戏数据 ====================
-        const ACHIEVEMENTS = {
-            BORN: { name: '来到人间', desc: '翠翠出生了' },
-            PRIMARY: { name: '小学毕业', desc: '完成基础教育' },
-            MIDDLE: { name: '初中生', desc: '进入青春期' },
-            FAILED_EXAM: { name: '名落孙山', desc: '中考失利' },
-            BEIDA: { name: '北大青鸟', desc: '开始IT学习之路' },
-            TOKEN_MASTER: { name: 'Token贴大师', desc: '学会用Token贴学代码' },
-            SCAMMER: { name: '第一桶金', desc: '通过诈骗赚到第一笔钱' },
-            GRADUATE: { name: '毕业即失业', desc: '从北大青鸟毕业' },
-            DATA_LABEL: { name: '标注员', desc: '成为数据标注员' },
-            CHEAT_STUDENT: { name: '大学生之友', desc: '成功骗取大学生' },
-            FIGHT_JIA: { name: '对抗嘉姐', desc: '与嘉姐正面对抗' },
-            FIGHT_WAN: { name: '对抗万总', desc: '与万总正面对抗' },
-            FAMILY_WAR: { name: '家族斗争', desc: '与二叔二婶周旋' },
-            GRANDMA_CARE: { name: '孝子贤孙', desc: '让二叔二婶赡养奶奶' },
-            MARRIED: { name: '喜结连理', desc: '与表妹结婚' },
-            PEACEFUL_DEATH: { name: '寿终正寝', desc: '安详离世' }
+        // ==================== 游戏配置 ====================
+        const CONFIG = {
+            GRAVITY: 0.6,
+            JUMP_FORCE: -12,
+            MOVE_SPEED: 4,
+            BULLET_SPEED: 10,
+            ENEMY_BULLET_SPEED: 5,
+            INVINCIBLE_TIME: 120,
+            CAMERA_SMOOTH: 0.1
         };
         
-        const EVENTS = {
-            // 婴儿期 (0-3岁)
-            BABY: [
-                {
-                    id: 'baby_1',
-                    text: '翠翠出生了，但医生发现他是个聋哑儿。父母陷入了沉默...',
-                    choices: [
-                        { text: '接受现实，用心爱他', effect: { moral: 10 } },
-                        { text: '叹气，但还是要养', effect: {} }
-                    ]
-                },
-                {
-                    id: 'baby_2',
-                    text: '虽然听不见，但翠翠总是对着人笑，特别可爱。',
-                    choices: [
-                        { text: '教他手语', effect: { int: 5 } },
-                        { text: '多抱抱他', effect: { str: 3 } }
-                    ]
-                }
-            ],
-            
-            // 童年期 (4-12岁)
-            CHILDHOOD: [
-                {
-                    id: 'child_1',
-                    text: '翠翠上了聋哑学校。虽然交流困难，但他学习很努力。',
-                    choices: [
-                        { text: '专心学习', effect: { int: 10, str: 3 } },
-                        { text: '锻炼身体', effect: { str: 10, int: 3 } }
-                    ]
-                },
-                {
-                    id: 'child_2',
-                    text: '同学们有时候会因为翠翠听不见而欺负他。',
-                    choices: [
-                        { text: '告诉老师', effect: { moral: 5, int: 3 } },
-                        { text: '打回去', effect: { str: 8, moral: -5 } }
-                    ]
-                },
-                {
-                    id: 'child_3',
-                    text: '翠翠发现了电脑，对这个神奇的东西产生了浓厚兴趣。',
-                    choices: [
-                        { text: '沉迷编程', effect: { code: 5, int: 5 } },
-                        { text: '玩游戏', effect: { luck: 5, code: 2 } }
-                    ]
-                }
-            ],
-            
-            // 青春期 (13-15岁)
-            TEEN: [
-                {
-                    id: 'teen_1',
-                    text: '翠翠初中了，成绩中等偏上，但中考压力越来越大。',
-                    choices: [
-                        { text: '拼命学习', effect: { int: 10, str: -3 } },
-                        { text: '劳逸结合', effect: { int: 5, str: 5 } }
-                    ]
-                },
-                {
-                    id: 'teen_2',
-                    text: '中考成绩出来了，翠翠没能考上高中...',
-                    choices: [
-                        { text: '接受命运', effect: { moral: -5 } },
-                        { text: '寻找出路', effect: { int: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('FAILED_EXAM')
-                },
-                {
-                    id: 'teen_3',
-                    text: '听说北大青鸟可以学IT，翠翠决定去试试。',
-                    choices: [
-                        { text: '报名北大青鸟', effect: { code: 10, money: -5000 } },
-                        { text: '先打工攒钱', effect: { money: 2000, str: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('BEIDA')
-                }
-            ],
-            
-            // 北大青鸟学习期 (16-18岁)
-            STUDY: [
-                {
-                    id: 'study_1',
-                    text: '北大青鸟的课程很紧，翠翠发现用Token贴可以加速学习代码！',
-                    choices: [
-                        { text: '疯狂Token贴', effect: { code: 20, int: 5, moral: -5 } },
-                        { text: '正常学习', effect: { code: 10, int: 8 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('TOKEN_MASTER')
-                },
-                {
-                    id: 'study_2',
-                    text: '有同学问翠翠要不要接私活，帮做小程序，但要求有点坑蒙拐骗...',
-                    choices: [
-                        { text: '接了赚钱!', effect: { money: 3000, code: 5, moral: -15 } },
-                        { text: '拒绝', effect: { moral: 10 } }
-                    ],
-                    onSelect: (choice) => {
-                        if (choice === 0) game.unlockAchievement('SCAMMER');
-                    }
-                },
-                {
-                    id: 'study_3',
-                    text: '又有一个私活，这次是直接诈骗！成功率很高。',
-                    choices: [
-                        { text: '干一票大的', effect: { money: 8000, moral: -25, code: 5 } },
-                        { text: '良心过不去', effect: { moral: 15 } }
-                    ]
-                },
-                {
-                    id: 'study_4',
-                    text: '翠翠毕业了，但IT行业竞争激烈，他找不到工作...',
-                    choices: [
-                        { text: '继续投简历', effect: { luck: 5 } },
-                        { text: '降低要求', effect: { money: 1000, str: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('GRADUATE')
-                },
-                {
-                    id: 'study_5',
-                    text: '最后翠翠找到了一份数据标注的工作，至少能糊口。',
-                    choices: [
-                        { text: '先干着', effect: { money: 2000, code: 3 } },
-                        { text: '骑驴找马', effect: { money: 2000, luck: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('DATA_LABEL')
-                }
-            ],
-            
-            // 工作期 - 数据标注 (19-25岁)
-            WORK_LABEL: [
-                {
-                    id: 'work_1',
-                    text: '数据标注工作枯燥无味，翠翠开始想办法"创收"。',
-                    choices: [
-                        { text: '骗大学生代做', effect: { money: 5000, moral: -20, code: 5 } },
-                        { text: '老实干活', effect: { money: 1000, moral: 5 } }
-                    ],
-                    onSelect: (choice) => {
-                        if (choice === 0) game.unlockAchievement('CHEAT_STUDENT');
-                    }
-                },
-                {
-                    id: 'work_2',
-                    text: '组长嘉姐对翠翠的工作不满意，总是刁难他。',
-                    choices: [
-                        { text: '正面对抗', effect: { str: 10, money: -1000 } },
-                        { text: '忍气吞声', effect: { moral: -10, money: 500 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('FIGHT_JIA')
-                },
-                {
-                    id: 'work_3',
-                    text: '万总来视察，发现翠翠"骗大学生"的事，要开除他！',
-                    choices: [
-                        { text: '狡辩', effect: { int: 10, luck: 5 } },
-                        { text: '承认错误', effect: { moral: 10, money: -2000 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('FIGHT_WAN')
-                }
-            ],
-            
-            // 家庭纷争期
-            FAMILY: [
-                {
-                    id: 'family_1',
-                    text: '二叔二婶不想赡养奶奶，把责任推给翠翠家。',
-                    choices: [
-                        { text: '据理力争', effect: { str: 10, int: 5 } },
-                        { text: '找亲戚评理', effect: { int: 8, luck: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('FAMILY_WAR')
-                },
-                {
-                    id: 'family_2',
-                    text: '经过一番斗智斗勇，二叔二婶终于答应赡养奶奶！',
-                    choices: [
-                        { text: '庆祝胜利', effect: { moral: 10, luck: 5 } },
-                        { text: '继续盯紧', effect: { int: 5, str: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('GRANDMA_CARE')
-                },
-                {
-                    id: 'family_3',
-                    text: '二姑家的表妹一直很喜欢翠翠，虽然他是聋哑人，但为人善良。',
-                    choices: [
-                        { text: '接受表白', effect: { moral: 10, luck: 10 } },
-                        { text: '考虑考虑', effect: { int: 5 } }
-                    ]
-                }
-            ],
-            
-            // 婚姻期
-            MARRIAGE: [
-                {
-                    id: 'marriage_1',
-                    text: '翠翠和表妹结婚了！虽然是近亲，但两人真心相爱。',
-                    choices: [
-                        { text: '举办婚礼', effect: { money: -10000, moral: 15, luck: 10 } },
-                        { text: '简单登记', effect: { money: -1000, moral: 5 } }
-                    ],
-                    onSelect: () => game.unlockAchievement('MARRIED')
-                },
-                {
-                    id: 'marriage_2',
-                    text: '婚后生活平淡但幸福，表妹很支持翠翠。',
-                    choices: [
-                        { text: '继续努力', effect: { str: 5, money: 2000 } },
-                        { text: '享受生活', effect: { luck: 10 } }
-                    ]
-                }
-            ],
-            
-            // 晚年期
-            OLD_AGE: [
-                {
-                    id: 'old_1',
-                    text: '翠翠年纪大了，身体大不如前。',
-                    choices: [
-                        { text: '养身体', effect: { str: -5, luck: 5 } },
-                        { text: '工作到最后一刻', effect: { money: 3000, str: -10 } }
-                    ]
-                },
-                {
-                    id: 'old_2',
-                    text: '翠翠回顾自己的一生：聋哑、北大青鸟、诈骗、对抗、爱情...',
-                    choices: [
-                        { text: '无怨无悔', effect: { moral: 10 } },
-                        { text: '感慨万分', effect: { int: 5 } }
-                    ]
-                },
-                {
-                    id: 'old_3',
-                    text: '翠翠安详地闭上了眼睛，身边有表妹和子孙陪伴。',
-                    choices: [
-                        { text: '寿终正寝', effect: {}, ending: true }
-                    ],
-                    onSelect: () => game.unlockAchievement('PEACEFUL_DEATH')
-                }
-            ]
-        };
-        
-        // ==================== 游戏主类 ====================
-        class Game {
+        // ==================== 输入管理 ====================
+        class InputManager {
             constructor() {
-                this.year = 0;
-                this.month = 1;
-                this.stats = {
-                    int: 10,
-                    str: 10,
-                    money: 0,
-                    moral: 50,
-                    code: 0,
-                    luck: 30
-                };
-                this.phase = 'BABY';
-                this.unlockedAchievements = [];
-                this.logs = [];
-                this.currentEventIndex = 0;
-                this.eventQueue = [];
-                this.isProcessing = false;
-                
-                // 初始化移动端手势
-                this.initTouchEvents();
+                this.keys = {};
+                this.initKeyboard();
+                this.initTouch();
             }
             
-            initTouchEvents() {
-                // 防止双击缩放
-                let lastTouchEnd = 0;
-                document.addEventListener('touchend', (e) => {
-                    const now = Date.now();
-                    if (now - lastTouchEnd <= 300) {
+            initKeyboard() {
+                window.addEventListener('keydown', (e) => {
+                    this.keys[e.key.toLowerCase()] = true;
+                    // 防止页面滚动
+                    if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(e.key.toLowerCase())) {
                         e.preventDefault();
                     }
-                    lastTouchEnd = now;
-                }, false);
-                
-                // 防止弹性滚动（iOS）
-                document.body.addEventListener('touchmove', (e) => {
-                    if (e.target.closest('.event-log')) return;
-                }, { passive: true });
-            }
-            
-            start() {
-                document.getElementById('startScreen').classList.add('hidden');
-                document.getElementById('gameContainer').style.display = 'block';
-                this.unlockAchievement('BORN');
-                this.nextEvent();
-            }
-            
-            restart() {
-                location.reload();
-            }
-            
-            unlockAchievement(key) {
-                if (this.unlockedAchievements.includes(key)) return;
-                this.unlockedAchievements.push(key);
-                
-                const popup = document.getElementById('achievementPopup');
-                document.getElementById('achievementName').textContent = ACHIEVEMENTS[key].name;
-                popup.classList.add('show');
-                setTimeout(() => popup.classList.remove('show'), 3000);
-            }
-            
-            updateUI() {
-                // 更新年龄
-                document.getElementById('ageYear').textContent = this.year;
-                document.getElementById('ageMonth').textContent = this.month;
-                
-                // 更新属性条
-                const maxStat = 100;
-                const updateBar = (id, value, max = maxStat) => {
-                    const bar = document.getElementById(id + 'Bar');
-                    const text = document.getElementById(id + 'Value');
-                    const percent = Math.min((value / max) * 100, 100);
-                    bar.style.width = percent + '%';
-                    text.textContent = Math.floor(value);
-                };
-                
-                updateBar('int', this.stats.int);
-                updateBar('str', this.stats.str);
-                updateBar('money', this.stats.money, 50000);
-                updateBar('moral', this.stats.moral);
-                updateBar('code', this.stats.code);
-                updateBar('luck', this.stats.luck);
-                
-                // 更新状态标签
-                const badge = document.getElementById('statusBadge');
-                const title = document.getElementById('characterTitle');
-                
-                if (this.year < 3) {
-                    badge.textContent = '婴儿';
-                    title.textContent = '一个聋哑的孩子';
-                } else if (this.year < 13) {
-                    badge.textContent = '小学生';
-                    title.textContent = '在聋哑学校学习';
-                } else if (this.year < 16) {
-                    badge.textContent = '初中生';
-                    title.textContent = '面临中考压力';
-                } else if (this.year < 19) {
-                    badge.textContent = '青鸟学员';
-                    title.textContent = '北大青鸟IT学员';
-                } else if (this.year < 26) {
-                    badge.textContent = '标注员';
-                    title.textContent = '数据标注工作者';
-                } else if (this.year < 30) {
-                    badge.textContent = '丈夫';
-                    title.textContent = '已婚人士';
-                } else {
-                    badge.textContent = '老人';
-                    title.textContent = '安享晚年';
-                }
-            }
-            
-            addLog(text, type = 'normal') {
-                const container = document.getElementById('logContainer');
-                const item = document.createElement('div');
-                item.className = 'log-item';
-                
-                const time = document.createElement('span');
-                time.className = 'log-time';
-                time.textContent = `${this.year}岁${this.month}月`;
-                
-                const content = document.createElement('span');
-                content.className = 'log-content ' + type;
-                content.textContent = text;
-                
-                item.appendChild(time);
-                item.appendChild(content);
-                container.insertBefore(item, container.firstChild);
-                
-                this.logs.push({ year: this.year, month: this.month, text, type });
-            }
-            
-            determinePhase() {
-                if (this.year < 3) return 'BABY';
-                if (this.year < 13) return 'CHILDHOOD';
-                if (this.year < 16) return 'TEEN';
-                if (this.year < 19) return 'STUDY';
-                if (this.year < 26) return 'WORK_LABEL';
-                if (this.year < 28) return 'FAMILY';
-                if (this.year < 32) return 'MARRIAGE';
-                return 'OLD_AGE';
-            }
-            
-            nextEvent() {
-                this.phase = this.determinePhase();
-                
-                // 根据阶段获取事件
-                const phaseEvents = EVENTS[this.phase];
-                if (!phaseEvents || this.currentEventIndex >= phaseEvents.length) {
-                    // 阶段事件用完，推进时间
-                    this.advanceTime();
-                    return;
-                }
-                
-                const event = phaseEvents[this.currentEventIndex];
-                this.showEvent(event);
-                this.currentEventIndex++;
-            }
-            
-            showEvent(event) {
-                this.isProcessing = false;
-                document.getElementById('storyText').textContent = event.text;
-                
-                const container = document.getElementById('choicesContainer');
-                container.innerHTML = '';
-                
-                event.choices.forEach((choice, index) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'choice-btn';
-                    if (choice.effect.moral > 0) btn.classList.add('positive');
-                    if (choice.effect.moral < 0) btn.classList.add('negative');
-                    btn.textContent = choice.text;
-                    
-                    // 同时支持点击和触摸
-                    const handleSelect = (e) => {
-                        e.preventDefault();
-                        if (this.isProcessing) return;
-                        this.isProcessing = true;
-                        this.makeChoice(choice, index, event);
-                    };
-                    
-                    btn.addEventListener('click', handleSelect);
-                    btn.addEventListener('touchend', (e) => {
-                        e.preventDefault();
-                        handleSelect(e);
-                    });
-                    
-                    container.appendChild(btn);
                 });
                 
-                // 滚动到故事顶部
-                if (window.innerWidth <= 480) {
-                    document.querySelector('.main-area').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                }
-                
-                this.updateUI();
+                window.addEventListener('keyup', (e) => {
+                    this.keys[e.key.toLowerCase()] = false;
+                });
             }
             
-            makeChoice(choice, index, event) {
-                // 应用效果
-                if (choice.effect) {
-                    for (let key in choice.effect) {
-                        if (this.stats[key] !== undefined) {
-                            this.stats[key] += choice.effect[key];
+            initTouch() {
+                const bindTouch = (id, key) => {
+                    const btn = document.getElementById(id);
+                    if (!btn) return;
+                    
+                    btn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        this.keys[key] = true;
+                    });
+                    
+                    btn.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        this.keys[key] = false;
+                    });
+                    
+                    btn.addEventListener('mousedown', () => this.keys[key] = true);
+                    btn.addEventListener('mouseup', () => this.keys[key] = false);
+                    btn.addEventListener('mouseleave', () => this.keys[key] = false);
+                };
+                
+                bindTouch('btnLeft', 'arrowleft');
+                bindTouch('btnRight', 'arrowright');
+                bindTouch('btnUp', 'arrowup');
+                bindTouch('btnDown', 'arrowdown');
+                bindTouch('btnShoot', 'z');
+                bindTouch('btnJump', 'x');
+            }
+            
+            isPressed(key) {
+                return !!this.keys[key.toLowerCase()];
+            }
+        }
+        
+        // ==================== 游戏实体 ====================
+        class Entity {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.vx = 0;
+                this.vy = 0;
+                this.dead = false;
+            }
+            
+            getBounds() {
+                return { x: this.x, y: this.y, width: this.width, height: this.height };
+            }
+            
+            intersects(other) {
+                const a = this.getBounds();
+                const b = other.getBounds();
+                return a.x < b.x + b.width &&
+                       a.x + a.width > b.x &&
+                       a.y < b.y + b.height &&
+                       a.y + a.height > b.y;
+            }
+            
+            update() {}
+            draw(ctx) {}
+        }
+        
+        // ==================== 玩家 ====================
+        class Player extends Entity {
+            constructor(x, y, avatar) {
+                super(x, y, 30, 50);
+                this.avatar = avatar;
+                this.facing = 1; // 1右 -1左
+                this.onGround = false;
+                this.invincible = 0;
+                this.shootCooldown = 0;
+                this.weapon = 'N'; // N普通 S霰弹 L激光 M机枪
+            }
+            
+            update(input, platforms) {
+                // 移动
+                if (input.isPressed('arrowleft')) {
+                    this.vx = -CONFIG.MOVE_SPEED;
+                    this.facing = -1;
+                } else if (input.isPressed('arrowright')) {
+                    this.vx = CONFIG.MOVE_SPEED;
+                    this.facing = 1;
+                } else {
+                    this.vx = 0;
+                }
+                
+                // 跳跃
+                if (input.isPressed('x') && this.onGround) {
+                    this.vy = CONFIG.JUMP_FORCE;
+                    this.onGround = false;
+                }
+                
+                // 重力
+                this.vy += CONFIG.GRAVITY;
+                
+                // 应用速度
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // 平台碰撞
+                this.onGround = false;
+                for (const platform of platforms) {
+                    if (this.intersects(platform)) {
+                        // 从上方落下
+                        if (this.vy > 0 && this.y - this.vy + this.height <= platform.y + 10) {
+                            this.y = platform.y - this.height;
+                            this.vy = 0;
+                            this.onGround = true;
+                        }
+                        // 从下方跳上
+                        else if (this.vy < 0 && this.y - this.vy >= platform.y + platform.height - 10) {
+                            this.y = platform.y + platform.height;
+                            this.vy = 0;
+                        }
+                        // 左右碰撞
+                        else if (this.vx > 0) {
+                            this.x = platform.x - this.width;
+                        } else if (this.vx < 0) {
+                            this.x = platform.x + platform.width;
                         }
                     }
                 }
                 
-                // 调用事件回调
-                if (event.onSelect) {
-                    event.onSelect(index);
+                // 边界
+                if (this.x < 0) this.x = 0;
+                if (this.y > 1000) this.dead = true; // 掉出地图
+                
+                // 射击
+                if (this.shootCooldown > 0) this.shootCooldown--;
+                if (input.isPressed('z') && this.shootCooldown <= 0) {
+                    this.shoot();
                 }
                 
-                // 添加日志
-                let logType = 'normal';
-                if (choice.effect.money > 0) logType = 'money';
-                else if (choice.effect.moral > 0) logType = 'good';
-                else if (choice.effect.moral < 0) logType = 'bad';
-                this.addLog(choice.text, logType);
-                
-                // 检查结局
-                if (choice.ending) {
-                    this.showEnding();
-                    return;
-                }
-                
-                // 推进时间
-                this.advanceTime();
+                // 无敌时间
+                if (this.invincible > 0) this.invincible--;
             }
             
-            advanceTime() {
-                this.month += Math.floor(Math.random() * 6) + 3;
-                if (this.month > 12) {
-                    this.month = 1;
-                    this.year++;
-                    this.currentEventIndex = 0; // 新年重置事件索引
-                    
-                    // 特殊年龄成就
-                    if (this.year === 6) this.unlockAchievement('PRIMARY');
-                    if (this.year === 13) this.unlockAchievement('MIDDLE');
+            shoot() {
+                this.shootCooldown = 10;
+                const bullets = [];
+                
+                switch(this.weapon) {
+                    case 'S': // 霰弹
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, 0, true));
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, -2, true));
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, 2, true));
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, -4, true));
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, 4, true));
+                        break;
+                    case 'L': // 激光
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED * 1.5, 0, true, 'laser'));
+                        break;
+                    case 'M': // 机枪
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, (Math.random()-0.5)*2, true));
+                        this.shootCooldown = 5;
+                        break;
+                    default: // 普通
+                        bullets.push(new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.BULLET_SPEED, 0, true));
                 }
                 
-                this.updateUI();
-                this.nextEvent();
+                return bullets;
             }
             
-            showEnding() {
-                const endScreen = document.getElementById('endScreen');
-                endScreen.classList.remove('hidden');
+            takeDamage() {
+                if (this.invincible > 0) return false;
+                this.invincible = CONFIG.INVINCIBLE_TIME;
+                return true;
+            }
+            
+            draw(ctx) {
+                // 无敌闪烁
+                if (this.invincible > 0 && Math.floor(this.invincible / 4) % 2 === 0) return;
                 
-                // 移动端滚动到顶部
-                if (window.innerWidth <= 480) {
-                    endScreen.scrollTop = 0;
-                    window.scrollTo(0, 0);
+                ctx.save();
+                
+                // 绘制角色（简化为魂斗罗风格的人物形状，头像作为头部）
+                if (this.avatar && this.avatar.complete) {
+                    // 头像
+                    const headSize = 25;
+                    ctx.save();
+                    ctx.translate(this.x + this.width/2, this.y + 15);
+                    if (this.facing === -1) {
+                        ctx.scale(-1, 1);
+                    }
+                    ctx.drawImage(this.avatar, -headSize/2, -headSize/2, headSize, headSize);
+                    ctx.restore();
                 }
                 
-                // 计算结局类型
-                let endingType = 'neutral';
-                let endingTitle = '';
-                let endingSummary = '';
+                // 身体（魂斗罗风格）
+                ctx.fillStyle = '#ff0000'; // 红色裤子
+                ctx.fillRect(this.x + 5, this.y + 30, 20, 20);
                 
-                if (this.stats.moral >= 70 && this.stats.money >= 20000) {
-                    endingType = 'good';
-                    endingTitle = '功德圆满';
-                    endingSummary = '翠翠虽然出身聋哑，但凭借自己的努力和善良，最终获得了幸福和财富。他用Token贴学习编程，在北大青鸟掌握了技能，虽然曾走过弯路，但最终回归正途。他与表妹的婚姻虽然不被世俗理解，但两人相濡以沫，白头偕老。';
-                } else if (this.stats.moral <= 30) {
-                    endingType = 'bad';
-                    endingTitle = '罪有应得';
-                    endingSummary = '翠翠一生走捷径，靠诈骗和坑蒙拐骗度日。虽然短期获得了金钱，但良心难安。最终孤独离世，无人送终。他的人生是一个警示：莫伸手，伸手必被捉。';
-                } else {
-                    endingType = 'neutral';
-                    endingTitle = '平凡一生';
-                    endingSummary = '翠翠的人生并不轰轰烈烈，但也不算失败。作为聋哑人，他努力生活，虽然有些小瑕疵，但总体是个好人。他经历了北大青鸟的学习、数据标注的枯燥、家庭的纷争，最终与表妹结婚，寿终正寝。这样的一生，也算圆满。';
-                }
+                ctx.fillStyle = '#0066cc'; // 蓝色上衣
+                ctx.fillRect(this.x + 5, this.y + 20, 20, 15);
                 
-                const titleEl = document.getElementById('endingTitle');
-                titleEl.className = 'ending-title ' + endingType;
-                titleEl.textContent = endingTitle;
+                // 枪
+                ctx.fillStyle = '#888';
+                const gunX = this.facing === 1 ? this.x + 25 : this.x - 5;
+                ctx.fillRect(gunX, this.y + 25, 10, 5);
                 
-                document.getElementById('endingSummary').textContent = endingSummary;
-                
-                // 最终属性
-                const statsHtml = `
-                    <div class="final-stat-item">
-                        <span>🧠 智力</span>
-                        <span>${Math.floor(this.stats.int)}</span>
-                    </div>
-                    <div class="final-stat-item">
-                        <span>💪 体力</span>
-                        <span>${Math.floor(this.stats.str)}</span>
-                    </div>
-                    <div class="final-stat-item">
-                        <span>💰 财富</span>
-                        <span>¥${Math.floor(this.stats.money)}</span>
-                    </div>
-                    <div class="final-stat-item">
-                        <span>⚖️ 道德</span>
-                        <span>${Math.floor(this.stats.moral)}</span>
-                    </div>
-                    <div class="final-stat-item">
-                        <span>💻 编程</span>
-                        <span>${Math.floor(this.stats.code)}</span>
-                    </div>
-                    <div class="final-stat-item">
-                        <span>🍀 运气</span>
-                        <span>${Math.floor(this.stats.luck)}</span>
-                    </div>
-                `;
-                document.getElementById('finalStats').innerHTML = statsHtml;
-                
-                // 成就列表
-                const achievementsHtml = this.unlockedAchievements.map(key => 
-                    `<span class="achievement">${ACHIEVEMENTS[key].name}</span>`
-                ).join('');
-                document.getElementById('achievementList').innerHTML = achievementsHtml;
+                ctx.restore();
             }
         }
         
-        const game = new Game();
+        // ==================== 子弹 ====================
+        class Bullet extends Entity {
+            constructor(x, y, vx, vy, isPlayer = false, type = 'normal') {
+                super(x, y, type === 'laser' ? 30 : 8, 4);
+                this.vx = vx;
+                this.vy = vy;
+                this.isPlayer = isPlayer;
+                this.type = type;
+                this.life = 60;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+                if (this.life <= 0) this.dead = true;
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = this.isPlayer ? '#ffff00' : '#ff0000';
+                if (this.type === 'laser') {
+                    ctx.fillRect(this.x, this.y, 30, 4);
+                } else {
+                    ctx.fillRect(this.x, this.y, 8, 4);
+                    // 子弹光晕
+                    ctx.fillStyle = this.isPlayer ? 'rgba(255,255,0,0.5)' : 'rgba(255,0,0,0.5)';
+                    ctx.fillRect(this.x-2, this.y-2, 12, 8);
+                }
+            }
+        }
+        
+        // ==================== 平台 ====================
+        class Platform extends Entity {
+            constructor(x, y, width, height, type = 'normal') {
+                super(x, y, width, height);
+                this.type = type;
+            }
+            
+            draw(ctx, cameraX) {
+                const screenX = this.x - cameraX;
+                
+                // 平台主体
+                if (this.type === 'ground') {
+                    ctx.fillStyle = '#4a3020';
+                    ctx.fillRect(screenX, this.y, this.width, this.height);
+                    // 草地
+                    ctx.fillStyle = '#228b22';
+                    ctx.fillRect(screenX, this.y, this.width, 10);
+                } else {
+                    ctx.fillStyle = '#8b4513';
+                    ctx.fillRect(screenX, this.y, this.width, this.height);
+                    // 平台边框
+                    ctx.strokeStyle = '#654321';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(screenX, this.y, this.width, this.height);
+                }
+            }
+        }
+        
+        // ==================== 敌人 ====================
+        class Enemy extends Entity {
+            constructor(x, y, type = 'soldier') {
+                super(x, y, 30, 50);
+                this.type = type;
+                this.hp = type === 'soldier' ? 1 : 3;
+                this.facing = -1;
+                this.moveTimer = 0;
+                this.shootTimer = 0;
+            }
+            
+            update(player, platforms) {
+                this.moveTimer++;
+                this.shootTimer++;
+                
+                // 简单AI：向玩家方向移动
+                const dx = player.x - this.x;
+                const dy = player.y - this.y;
+                
+                if (Math.abs(dx) < 300) {
+                    if (dx > 30) {
+                        this.vx = 1.5;
+                        this.facing = 1;
+                    } else if (dx < -30) {
+                        this.vx = -1.5;
+                        this.facing = -1;
+                    } else {
+                        this.vx = 0;
+                    }
+                    
+                    this.x += this.vx;
+                }
+                
+                // 重力
+                this.vy += CONFIG.GRAVITY;
+                this.y += this.vy;
+                
+                // 平台碰撞
+                for (const platform of platforms) {
+                    if (this.intersects(platform)) {
+                        if (this.vy > 0) {
+                            this.y = platform.y - this.height;
+                            this.vy = 0;
+                        }
+                    }
+                }
+                
+                // 射击
+                if (this.shootTimer > 120 && Math.abs(dx) < 250 && Math.abs(dy) < 50) {
+                    this.shootTimer = 0;
+                    return new Bullet(this.x + this.width/2, this.y + 20, this.facing * CONFIG.ENEMY_BULLET_SPEED, 0, false);
+                }
+                
+                return null;
+            }
+            
+            takeDamage() {
+                this.hp--;
+                if (this.hp <= 0) {
+                    this.dead = true;
+                    return true;
+                }
+                return false;
+            }
+            
+            draw(ctx, cameraX) {
+                const screenX = this.x - cameraX;
+                
+                // 敌人（魂斗罗风格士兵）
+                ctx.fillStyle = this.type === 'soldier' ? '#8b0000' : '#4a0080';
+                ctx.fillRect(screenX + 5, this.y + 30, 20, 20);
+                
+                ctx.fillStyle = '#ff6600';
+                ctx.fillRect(screenX + 5, this.y + 20, 20, 15);
+                
+                // 头盔
+                ctx.fillStyle = '#444';
+                ctx.fillRect(screenX + 5, this.y + 5, 20, 15);
+                
+                // 枪
+                ctx.fillStyle = '#888';
+                const gunX = this.facing === 1 ? screenX + 25 : screenX - 5;
+                ctx.fillRect(gunX, this.y + 25, 10, 5);
+            }
+        }
+        
+        // ==================== BOSS ====================
+        class Boss extends Enemy {
+            constructor(x, y) {
+                super(x, y, 'boss');
+                this.width = 80;
+                this.height = 100;
+                this.maxHp = 50;
+                this.hp = this.maxHp;
+                this.phase = 0;
+                this.movePattern = 0;
+            }
+            
+            update(player, platforms) {
+                this.movePattern++;
+                
+                // BOSS移动模式
+                this.x += Math.sin(this.movePattern * 0.02) * 2;
+                this.y = 300 + Math.sin(this.movePattern * 0.03) * 50;
+                
+                // 发射子弹
+                const bullets = [];
+                if (this.movePattern % 60 === 0) {
+                    bullets.push(new Bullet(this.x, this.y + 50, -5, 0, false));
+                    bullets.push(new Bullet(this.x, this.y + 50, -4, -2, false));
+                    bullets.push(new Bullet(this.x, this.y + 50, -4, 2, false));
+                }
+                
+                return bullets;
+            }
+            
+            draw(ctx, cameraX) {
+                const screenX = this.x - cameraX;
+                
+                // BOSS身体
+                ctx.fillStyle = '#800080';
+                ctx.fillRect(screenX, this.y, this.width, this.height);
+                
+                // BOSS核心
+                ctx.fillStyle = `hsl(${this.movePattern % 360}, 100%, 50%)`;
+                ctx.fillRect(screenX + 20, this.y + 20, 40, 40);
+                
+                // 炮管
+                ctx.fillStyle = '#444';
+                ctx.fillRect(screenX - 20, this.y + 45, 20, 10);
+                
+                // 翠翠的头作为BOSS脸
+                if (game.avatar && game.avatar.complete) {
+                    ctx.save();
+                    ctx.translate(screenX + this.width/2, this.y + 30);
+                    ctx.drawImage(game.avatar, -20, -20, 40, 40);
+                    ctx.restore();
+                }
+            }
+        }
+        
+        // ==================== 道具 ====================
+        class PowerUp extends Entity {
+            constructor(x, y, type) {
+                super(x, y, 30, 30);
+                this.type = type; // 'S'霰弹 'L'激光 'M'机枪 'R'生命
+                this.bobOffset = 0;
+            }
+            
+            update() {
+                this.bobOffset += 0.1;
+            }
+            
+            draw(ctx, cameraX) {
+                const screenX = this.x - cameraX;
+                const y = this.y + Math.sin(this.bobOffset) * 5;
+                
+                // 道具背景
+                ctx.fillStyle = '#444';
+                ctx.fillRect(screenX, y, 30, 30);
+                
+                // 道具图标
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 20px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                let text = this.type;
+                let color = '#fff';
+                switch(this.type) {
+                    case 'S': color = '#ff6600'; break;
+                    case 'L': color = '#00ffff'; break;
+                    case 'M': color = '#ff00ff'; break;
+                    case 'R': color = '#ff0000'; text = '♥'; break;
+                }
+                ctx.fillStyle = color;
+                ctx.fillText(text, screenX + 15, y + 15);
+                
+                // 光晕效果
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(screenX - 2, y - 2, 34, 34);
+            }
+        }
+        
+        // ==================== 粒子效果 ====================
+        class Particle extends Entity {
+            constructor(x, y, color) {
+                super(x, y, 4, 4);
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8;
+                this.color = color;
+                this.life = 30;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.3;
+                this.life--;
+                if (this.life <= 0) this.dead = true;
+            }
+            
+            draw(ctx, cameraX) {
+                const screenX = this.x - cameraX;
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life / 30;
+                ctx.fillRect(screenX, this.y, this.width, this.height);
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        // ==================== 游戏主类 ====================
+        class ContraGame {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.input = new InputManager();
+                
+                this.setupCanvas();
+                
+                // 加载翠翠头像
+                this.avatar = new Image();
+                this.avatar.src = 'cuicui.jpg';
+                
+                this.reset();
+                this.bindUI();
+            }
+            
+            setupCanvas() {
+                const resize = () => {
+                    const container = document.getElementById('gameContainer');
+                    const aspectRatio = 16 / 9;
+                    let width = container.clientWidth;
+                    let height = container.clientHeight;
+                    
+                    if (width / height > aspectRatio) {
+                        width = height * aspectRatio;
+                    } else {
+                        height = width / aspectRatio;
+                    }
+                    
+                    this.canvas.width = 960;
+                    this.canvas.height = 540;
+                    this.canvas.style.width = width + 'px';
+                    this.canvas.style.height = height + 'px';
+                };
+                
+                resize();
+                window.addEventListener('resize', resize);
+            }
+            
+            reset() {
+                this.score = 0;
+                this.lives = 3;
+                this.stage = 1;
+                this.isRunning = false;
+                this.isPaused = false;
+                this.cameraX = 0;
+                
+                this.player = null;
+                this.platforms = [];
+                this.enemies = [];
+                this.bullets = [];
+                this.powerUps = [];
+                this.particles = [];
+                this.boss = null;
+            }
+            
+            bindUI() {
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('restartBtn').addEventListener('click', () => this.restart());
+                document.getElementById('nextStageBtn').addEventListener('click', () => this.nextStage());
+            }
+            
+            start() {
+                document.getElementById('startScreen').classList.add('hidden');
+                this.initStage();
+                this.isRunning = true;
+                this.loop();
+            }
+            
+            restart() {
+                document.getElementById('gameOverScreen').classList.add('hidden');
+                this.lives = 3;
+                this.score = 0;
+                this.stage = 1;
+                this.initStage();
+                this.isRunning = true;
+                this.loop();
+            }
+            
+            nextStage() {
+                document.getElementById('stageClearScreen').classList.add('hidden');
+                this.stage++;
+                this.initStage();
+                this.isRunning = true;
+                this.loop();
+            }
+            
+            initStage() {
+                this.player = new Player(100, 300, this.avatar);
+                this.bullets = [];
+                this.enemies = [];
+                this.powerUps = [];
+                this.particles = [];
+                this.boss = null;
+                this.cameraX = 0;
+                
+                this.generateStage();
+                this.updateUI();
+            }
+            
+            generateStage() {
+                this.platforms = [];
+                
+                // 地面
+                for (let i = 0; i < 50; i++) {
+                    this.platforms.push(new Platform(i * 100, 450, 100, 90, 'ground'));
+                }
+                
+                // 平台
+                const platformLayouts = [
+                    { x: 300, y: 350, w: 100 },
+                    { x: 500, y: 300, w: 80 },
+                    { x: 700, y: 350, w: 100 },
+                    { x: 900, y: 280, w: 80 },
+                    { x: 1200, y: 350, w: 100 },
+                    { x: 1500, y: 300, w: 80 },
+                    { x: 1800, y: 350, w: 100 },
+                    { x: 2100, y: 280, w: 80 },
+                    { x: 2400, y: 350, w: 100 },
+                    { x: 2800, y: 300, w: 150 },
+                    { x: 3200, y: 350, w: 100 },
+                    { x: 3500, y: 280, w: 80 },
+                    { x: 3800, y: 350, w: 200 },
+                ];
+                
+                platformLayouts.forEach(p => {
+                    this.platforms.push(new Platform(p.x, p.y, p.w, 20, 'platform'));
+                });
+                
+                // 生成敌人
+                const enemyPositions = [
+                    { x: 400, y: 400 }, { x: 800, y: 400 },
+                    { x: 1200, y: 400 }, { x: 1600, y: 400 },
+                    { x: 2000, y: 400 }, { x: 2500, y: 400 },
+                    { x: 3000, y: 400 }, { x: 3500, y: 400 },
+                    { x: 600, y: 400 }, { x: 1400, y: 400 },
+                    { x: 2200, y: 400 }, { x: 3300, y: 400 },
+                ];
+                
+                enemyPositions.forEach(pos => {
+                    this.enemies.push(new Enemy(pos.x, pos.y));
+                });
+                
+                // 道具
+                this.powerUps.push(new PowerUp(550, 250, 'S'));
+                this.powerUps.push(new PowerUp(1300, 300, 'L'));
+                this.powerUps.push(new PowerUp(2200, 300, 'M'));
+                this.powerUps.push(new PowerUp(2900, 250, 'R'));
+                
+                // BOSS（第3关）
+                if (this.stage >= 3) {
+                    this.boss = new Boss(4000, 300);
+                }
+            }
+            
+            update() {
+                if (!this.isRunning || this.isPaused) return;
+                
+                // 更新玩家
+                this.player.update(this.input, this.platforms);
+                
+                // 玩家射击
+                if (this.input.isPressed('z')) {
+                    const newBullets = this.player.shoot();
+                    if (newBullets) {
+                        this.bullets.push(...newBullets);
+                    }
+                }
+                
+                // 更新相机
+                const targetCamX = this.player.x - 200;
+                this.cameraX += (targetCamX - this.cameraX) * CONFIG.CAMERA_SMOOTH;
+                if (this.cameraX < 0) this.cameraX = 0;
+                if (this.cameraX > 4000) this.cameraX = 4000;
+                
+                // 更新子弹
+                this.bullets.forEach(b => b.update());
+                this.bullets = this.bullets.filter(b => !b.dead);
+                
+                // 更新敌人
+                this.enemies.forEach(e => {
+                    const bullet = e.update(this.player, this.platforms);
+                    if (bullet) this.bullets.push(bullet);
+                });
+                this.enemies = this.enemies.filter(e => !e.dead);
+                
+                // 更新BOSS
+                if (this.boss) {
+                    const bossBullets = this.boss.update(this.player, this.platforms);
+                    if (bossBullets) this.bullets.push(...bossBullets);
+                    
+                    // 更新BOSS血条
+                    const bossHpFill = document.getElementById('bossHpFill');
+                    const bossHpContainer = document.getElementById('bossHpContainer');
+                    bossHpContainer.classList.add('show');
+                    bossHpFill.style.width = (this.boss.hp / this.boss.maxHp * 100) + '%';
+                    
+                    if (this.boss.dead) {
+                        this.stageClear();
+                    }
+                } else {
+                    document.getElementById('bossHpContainer').classList.remove('show');
+                }
+                
+                // 更新道具
+                this.powerUps.forEach(p => p.update());
+                this.powerUps = this.powerUps.filter(p => !p.dead);
+                
+                // 更新粒子
+                this.particles.forEach(p => p.update());
+                this.particles = this.particles.filter(p => !p.dead);
+                
+                // 碰撞检测
+                this.checkCollisions();
+                
+                // 检查玩家死亡
+                if (this.player.dead) {
+                    this.playerDied();
+                }
+                
+                // 生成新敌人（简单刷怪）
+                if (Math.random() < 0.01 && this.enemies.length < 20 && !this.boss) {
+                    const spawnX = this.cameraX + 800 + Math.random() * 200;
+                    this.enemies.push(new Enemy(spawnX, 400));
+                }
+            }
+            
+            checkCollisions() {
+                // 玩家子弹打敌人
+                this.bullets.forEach(b => {
+                    if (!b.isPlayer) return;
+                    
+                    this.enemies.forEach(e => {
+                        if (b.intersects(e)) {
+                            b.dead = true;
+                            if (e.takeDamage()) {
+                                this.score += 100;
+                                this.createExplosion(e.x + e.width/2, e.y + e.height/2, '#ff6600');
+                            }
+                        }
+                    });
+                    
+                    // 打BOSS
+                    if (this.boss && b.intersects(this.boss)) {
+                        b.dead = true;
+                        this.boss.hp--;
+                        if (this.boss.hp <= 0) {
+                            this.boss.dead = true;
+                            this.score += 5000;
+                            this.createExplosion(this.boss.x + 40, this.boss.y + 50, '#ff00ff');
+                        }
+                    }
+                });
+                
+                // 敌人子弹打玩家
+                this.bullets.forEach(b => {
+                    if (b.isPlayer) return;
+                    if (b.intersects(this.player)) {
+                        b.dead = true;
+                        if (this.player.takeDamage()) {
+                            this.createExplosion(this.player.x + 15, this.player.y + 25, '#ff0000');
+                        }
+                    }
+                });
+                
+                // 玩家碰敌人
+                this.enemies.forEach(e => {
+                    if (this.player.intersects(e)) {
+                        if (this.player.takeDamage()) {
+                            this.createExplosion(this.player.x + 15, this.player.y + 25, '#ff0000');
+                        }
+                    }
+                });
+                
+                // 捡道具
+                this.powerUps.forEach(p => {
+                    if (this.player.intersects(p)) {
+                        p.dead = true;
+                        if (p.type === 'R') {
+                            this.lives++;
+                            this.score += 500;
+                        } else {
+                            this.player.weapon = p.type;
+                        }
+                        this.createExplosion(p.x + 15, p.y + 15, '#ffff00');
+                    }
+                });
+            }
+            
+            createExplosion(x, y, color) {
+                for (let i = 0; i < 10; i++) {
+                    this.particles.push(new Particle(x, y, color));
+                }
+            }
+            
+            playerDied() {
+                this.lives--;
+                this.updateUI();
+                
+                if (this.lives <= 0) {
+                    this.gameOver();
+                } else {
+                    // 复活
+                    this.player = new Player(this.cameraX + 100, 300, this.avatar);
+                    this.player.weapon = 'N';
+                }
+            }
+            
+            stageClear() {
+                this.isRunning = false;
+                document.getElementById('stageScore').textContent = this.score;
+                document.getElementById('stageClearScreen').classList.remove('hidden');
+            }
+            
+            gameOver() {
+                this.isRunning = false;
+                document.getElementById('finalScore').textContent = this.score;
+                document.getElementById('gameOverScreen').classList.remove('hidden');
+            }
+            
+            updateUI() {
+                document.getElementById('scoreValue').textContent = this.score.toString().padStart(6, '0');
+                document.getElementById('livesValue').textContent = '×' + this.lives;
+                document.getElementById('weaponIcon').textContent = this.player ? this.player.weapon : 'N';
+            }
+            
+            draw() {
+                // 清空画布
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制背景（天空渐变）
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#001a33');
+                gradient.addColorStop(0.5, '#003d66');
+                gradient.addColorStop(1, '#006699');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制远景山脉（像素风格）
+                this.ctx.fillStyle = '#002244';
+                for (let i = 0; i < 20; i++) {
+                    const x = (i * 100 - this.cameraX * 0.3) % 2000;
+                    const h = 100 + Math.sin(i * 0.5) * 50;
+                    this.ctx.fillRect(x, 450 - h, 100, h);
+                }
+                
+                // 绘制平台
+                this.platforms.forEach(p => {
+                    if (p.x - this.cameraX > -200 && p.x - this.cameraX < this.canvas.width + 200) {
+                        p.draw(this.ctx, this.cameraX);
+                    }
+                });
+                
+                // 绘制道具
+                this.powerUps.forEach(p => {
+                    if (p.x - this.cameraX > -100 && p.x - this.cameraX < this.canvas.width + 100) {
+                        p.draw(this.ctx, this.cameraX);
+                    }
+                });
+                
+                // 绘制敌人
+                this.enemies.forEach(e => {
+                    if (e.x - this.cameraX > -100 && e.x - this.cameraX < this.canvas.width + 100) {
+                        e.draw(this.ctx, this.cameraX);
+                    }
+                });
+                
+                // 绘制BOSS
+                if (this.boss) {
+                    this.boss.draw(this.ctx, this.cameraX);
+                }
+                
+                // 绘制玩家
+                if (this.player) {
+                    this.player.draw(this.ctx);
+                }
+                
+                // 绘制子弹
+                this.bullets.forEach(b => b.draw(this.ctx, this.cameraX));
+                
+                // 绘制粒子
+                this.particles.forEach(p => p.draw(this.ctx, this.cameraX));
+                
+                // 更新UI
+                this.updateUI();
+            }
+            
+            loop() {
+                if (!this.isRunning) return;
+                
+                this.update();
+                this.draw();
+                
+                requestAnimationFrame(() => this.loop());
+            }
+        }
+        
+        // 启动游戏
+        const game = new ContraGame();
     </script>
 </body>
 </html>
