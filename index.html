@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>翠斗罗1.0</title>
+    <title>翠斗罗 - CUI CONTRA</title>
     <style>
         * {
             margin: 0;
@@ -135,7 +135,7 @@
             display: none;
             pointer-events: none;
             padding: 0 20px 20px;
-            z-index: 20;
+            z-index: 50;
         }
         
         @media (max-width: 768px) {
@@ -302,11 +302,13 @@
             justify-content: center;
             align-items: center;
             pointer-events: auto;
-            z-index: 100;
+            z-index: 1000;
         }
         
         .screen.hidden {
             display: none !important;
+            opacity: 0;
+            pointer-events: none;
         }
         
         .game-title {
@@ -374,6 +376,9 @@
             text-transform: uppercase;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
             margin-top: 20px;
+            pointer-events: auto;
+            position: relative;
+            z-index: 1001;
         }
         
         .start-btn:active {
@@ -513,7 +518,23 @@
             </div>
         </div>
         
-        <!-- 移动端控制 - 手柄风格 -->
+        <!-- 开始屏幕 -->
+        <div id="startScreen" class="screen">
+            <h1 class="game-title">翠斗罗</h1>
+            <p class="game-subtitle">CUI CONTRA</p>
+            <div class="start-avatar">
+                <img src="cuicui.jpg" alt="翠翠">
+            </div>
+            <p class="blink-text">PUSH START BUTTON</p>
+            <button class="start-btn" id="startBtn">START</button>
+            <div class="controls-hint">
+                ← → MOVE　↑ ↓ AIM　<br>
+                Z SHOOT　X JUMP<br>
+                © 2024 CUI SOFT
+            </div>
+        </div>
+        
+        <!-- 移动端控制 - 手柄风格 (移到屏幕后面) -->
         <div class="mobile-controls">
             <!-- 十字方向键 -->
             <div class="d-pad">
@@ -534,22 +555,6 @@
                     JUMP
                     <span class="btn-label">A</span>
                 </div>
-            </div>
-        </div>
-        
-        <!-- 开始屏幕 -->
-        <div id="startScreen" class="screen">
-            <h1 class="game-title">翠斗罗</h1>
-            <p class="game-subtitle">CUI CONTRA</p>
-            <div class="start-avatar">
-                <img src="cuicui.jpg" alt="翠翠">
-            </div>
-            <p class="blink-text">PUSH START BUTTON</p>
-            <button class="start-btn" id="startBtn">START</button>
-            <div class="controls-hint">
-                ← → MOVE　↑ ↓ AIM　<br>
-                Z SHOOT　X JUMP<br>
-                © 2024 CUI SOFT
             </div>
         </div>
         
@@ -853,7 +858,6 @@
                 if (this.invincible > 0 && Math.floor(this.invincible / 4) % 2 === 0) return;
                 
                 const sx = this.x - cameraX;
-                const sy = this.y;
                 const sy = this.y;
                 
                 ctx.save();
@@ -1351,20 +1355,40 @@
         // ==================== 游戏主类 ====================
         class ContraGame {
             constructor() {
+                console.log('ContraGame constructor started');
+                
                 this.canvas = document.getElementById('gameCanvas');
+                if (!this.canvas) {
+                    console.error('Canvas element not found!');
+                    return;
+                }
+                
                 this.ctx = this.canvas.getContext('2d');
+                if (!this.ctx) {
+                    console.error('Could not get canvas context!');
+                    return;
+                }
+                
                 this.input = new InputManager();
                 
                 this.setupCanvas();
                 
                 this.avatar = new Image();
                 this.avatar.src = 'cuicui.jpg';
+                this.avatarLoaded = false;
                 this.avatar.onload = () => {
+                    console.log('Avatar loaded');
                     this.avatarLoaded = true;
+                };
+                this.avatar.onerror = () => {
+                    console.warn('Avatar failed to load, using default');
+                    this.avatarLoaded = true; // 使用默认绘制
                 };
                 
                 this.reset();
                 this.bindUI();
+                
+                console.log('ContraGame constructor completed');
             }
             
             setupCanvas() {
@@ -1422,16 +1446,22 @@
                 const restartBtn = document.getElementById('restartBtn');
                 const nextStageBtn = document.getElementById('nextStageBtn');
                 
+                console.log('Binding UI buttons:', { startBtn, restartBtn, nextStageBtn });
+                
                 if (startBtn) {
                     startBtn.addEventListener('click', (e) => {
+                        console.log('Start button clicked');
                         e.preventDefault();
                         e.stopPropagation();
                         this.start();
                     });
                     startBtn.addEventListener('touchend', (e) => {
+                        console.log('Start button touched');
                         e.preventDefault();
                         this.start();
                     });
+                } else {
+                    console.error('Start button not found!');
                 }
                 
                 if (restartBtn) {
@@ -1450,14 +1480,35 @@
             }
             
             start() {
-                document.getElementById('startScreen').classList.add('hidden');
-                
-                // 确保canvas尺寸正确
-                if (this.resizeCanvas) this.resizeCanvas();
-                
-                this.initStage();
-                this.isRunning = true;
-                this.loop();
+                console.log('Game starting...');
+                try {
+                    const startScreen = document.getElementById('startScreen');
+                    if (startScreen) {
+                        startScreen.style.display = 'none';
+                        startScreen.classList.add('hidden');
+                        console.log('Start screen hidden');
+                    }
+                    
+                    // 确保canvas尺寸正确
+                    if (this.resizeCanvas) {
+                        this.resizeCanvas();
+                        console.log('Canvas resized');
+                    }
+                    
+                    this.initStage();
+                    console.log('Stage initialized, player at:', this.player ? {x: this.player.x, y: this.player.y} : 'no player');
+                    
+                    this.isRunning = true;
+                    
+                    // 强制立即绘制一帧
+                    this.draw();
+                    console.log('First frame drawn');
+                    
+                    this.loop();
+                    console.log('Game loop started');
+                } catch (err) {
+                    console.error('Error starting game:', err);
+                }
             }
             
             restart() {
@@ -1831,7 +1882,16 @@
             }
         }
         
-        const game = new ContraGame();
+        let game;
+        
+        // 等待DOM加载完成
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                game = new ContraGame();
+            });
+        } else {
+            game = new ContraGame();
+        }
     </script>
 </body>
 </html>
