@@ -41,11 +41,13 @@
         }
         
         #gameCanvas {
+            display: block;
             width: 100%;
             height: 100%;
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
+            background: #87CEEB;
         }
         
         /* UI层 */
@@ -304,7 +306,7 @@
         }
         
         .screen.hidden {
-            display: none;
+            display: none !important;
         }
         
         .game-title {
@@ -1371,9 +1373,11 @@
                 
                 const resize = () => {
                     const container = document.getElementById('gameContainer');
+                    if (!container) return;
+                    
                     const aspectRatio = CONFIG.SCREEN_WIDTH / CONFIG.SCREEN_HEIGHT;
-                    let width = container.clientWidth;
-                    let height = container.clientHeight;
+                    let width = container.clientWidth || window.innerWidth;
+                    let height = container.clientHeight || window.innerHeight;
                     
                     if (width / height > aspectRatio) {
                         width = height * aspectRatio;
@@ -1381,12 +1385,18 @@
                         height = width / aspectRatio;
                     }
                     
-                    this.canvas.style.width = width + 'px';
-                    this.canvas.style.height = height + 'px';
+                    // 确保尺寸不为0
+                    if (width > 0 && height > 0) {
+                        this.canvas.style.width = Math.floor(width) + 'px';
+                        this.canvas.style.height = Math.floor(height) + 'px';
+                    }
                 };
                 
-                resize();
+                // 延迟执行resize确保DOM已渲染
+                setTimeout(resize, 0);
                 window.addEventListener('resize', resize);
+                
+                this.resizeCanvas = resize;
             }
             
             reset() {
@@ -1408,13 +1418,43 @@
             }
             
             bindUI() {
-                document.getElementById('startBtn').addEventListener('click', () => this.start());
-                document.getElementById('restartBtn').addEventListener('click', () => this.restart());
-                document.getElementById('nextStageBtn').addEventListener('click', () => this.nextStage());
+                const startBtn = document.getElementById('startBtn');
+                const restartBtn = document.getElementById('restartBtn');
+                const nextStageBtn = document.getElementById('nextStageBtn');
+                
+                if (startBtn) {
+                    startBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.start();
+                    });
+                    startBtn.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        this.start();
+                    });
+                }
+                
+                if (restartBtn) {
+                    restartBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.restart();
+                    });
+                }
+                
+                if (nextStageBtn) {
+                    nextStageBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.nextStage();
+                    });
+                }
             }
             
             start() {
                 document.getElementById('startScreen').classList.add('hidden');
+                
+                // 确保canvas尺寸正确
+                if (this.resizeCanvas) this.resizeCanvas();
+                
                 this.initStage();
                 this.isRunning = true;
                 this.loop();
